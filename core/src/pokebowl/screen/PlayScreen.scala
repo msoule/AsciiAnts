@@ -1,10 +1,12 @@
-package screen
+package pokebowl.screen
 
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.g2d.SpriteBatch
-import com.badlogic.gdx.graphics.{Texture, OrthographicCamera, GL20, Color}
-import com.badlogic.gdx.math.{Vector3, Rectangle}
-import com.badlogic.gdx.{Gdx, Screen, InputAdapter}
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
+import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, Texture}
+import com.badlogic.gdx.math.{Rectangle, Vector3}
+import com.badlogic.gdx.{Gdx, InputAdapter, Screen}
 
 /**
   * Created by msoule on 1/26/16.
@@ -12,6 +14,7 @@ import com.badlogic.gdx.{Gdx, Screen, InputAdapter}
 class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) extends InputAdapter with Screen {
 
   var batch: SpriteBatch = _
+  var shapeRenderer: ShapeRenderer = _
   var camera: OrthographicCamera = _
   var box: Rectangle = _
   var testSprite: Texture = _
@@ -20,7 +23,9 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
 
   }
 
-  override def hide(): Unit = ???
+  override def hide(): Unit = {
+
+  }
 
   override def dispose(): Unit = {
 
@@ -47,11 +52,11 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
 
     // tell the SpriteBatch to render in the
     // coordinate system specified by the camera.
-    batch.setProjectionMatrix(camera.combined)
-
-    batch.begin()
-    batch.draw(testSprite, box.x, box.y)
-    batch.end()
+//    batch.setProjectionMatrix(camera.combined)
+//    batch.begin()
+//    batch.draw(testSprite, box.x, box.y)
+//    batch.end()
+    drawMenu()
 
     // process user input
     if(Gdx.input.isTouched()) {
@@ -74,6 +79,25 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     if(box.y > height - 64) box.y = height - 64
   }
 
+  private def drawMenu(): Unit = {
+    val buffer = 40
+    val menuBoxWidth = 160
+    val menuBoxHeight = 90
+    shapeRenderer.setProjectionMatrix(camera.combined)
+    shapeRenderer.begin(ShapeType.Line)
+    shapeRenderer.setColor(0, 0, 0, 0)
+    // bottom left
+    shapeRenderer.rect(buffer, buffer, menuBoxWidth, menuBoxHeight)
+    // top left
+    shapeRenderer.rect(buffer, buffer + menuBoxHeight, menuBoxWidth, menuBoxHeight)
+    // top right
+    shapeRenderer.rect(buffer + menuBoxWidth, buffer + menuBoxHeight, menuBoxWidth, menuBoxHeight)
+    // bottom right
+    shapeRenderer.rect(buffer + menuBoxWidth, buffer, menuBoxWidth, menuBoxHeight)
+
+    shapeRenderer.end()
+  }
+
   /**
     * Initializes the screen at creation.
     */
@@ -82,6 +106,7 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     camera = new OrthographicCamera()
     camera.setToOrtho(false, width, height)
     batch = new SpriteBatch()
+    shapeRenderer = new ShapeRenderer()
 
     testSprite = new Texture(Gdx.files.internal("sprites/bucket.png"));
 
@@ -93,5 +118,7 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     box.height = 64
   }
 
-  override def resume(): Unit = ???
+  override def resume(): Unit = {
+
+  }
 }

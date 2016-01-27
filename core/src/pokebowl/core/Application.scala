@@ -1,7 +1,7 @@
 package pokebowl.core
 
 import com.badlogic.gdx.{Gdx, Game}
-import screen.PlayScreen
+import pokebowl.screen.PlayScreen
 
 class Application extends Game {
 
