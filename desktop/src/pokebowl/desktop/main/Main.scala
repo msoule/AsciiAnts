@@ -1,4 +1,4 @@
-package pokebowl.desktop
+package pokebowl.desktop.main
 
 import com.badlogic.gdx.backends.lwjgl.{LwjglApplication, LwjglApplicationConfiguration}
 import pokebowl.core.Application
