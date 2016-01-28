@@ -24,6 +24,8 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
   var testSprite: Texture = _
   var pokemonFont: FreeTypeFontGenerator = _
   var smallFontSize: FreeTypeFontParameter = _
+  var cursorPosition = 2
+  var playSelect: Option[Int] = _
 
   override def resize(width: Int, height: Int): Unit = {
 
@@ -35,6 +37,8 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
 
   override def dispose(): Unit = {
     pokemonFont.dispose()
+    shapeRenderer.dispose()
+    batch.dispose()
   }
 
   override def pause(): Unit = {
@@ -63,6 +67,7 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
 //    batch.draw(testSprite, box.x, box.y)
 //    batch.end()
     drawMenu()
+    executePlay()
 
     // process user input
     if(Gdx.input.isTouched()) {
@@ -73,16 +78,40 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     }
 
     // Check for user input and move the box as specified.
-    if(Gdx.input.isKeyPressed(Keys.LEFT)) box.x -= 200 * Gdx.graphics.getDeltaTime
-    if(Gdx.input.isKeyPressed(Keys.RIGHT)) box.x += 200 * Gdx.graphics.getDeltaTime
-    if(Gdx.input.isKeyPressed(Keys.DOWN)) box.y -= 200 * Gdx.graphics.getDeltaTime
-    if(Gdx.input.isKeyPressed(Keys.UP)) box.y += 200 * Gdx.graphics.getDeltaTime
+    //if(Gdx.input.isKeyPressed(Keys.LEFT)) box.x -= 200 * Gdx.graphics.getDeltaTime
+    //if(Gdx.input.isKeyPressed(Keys.RIGHT)) box.x += 200 * Gdx.graphics.getDeltaTime
+    //if(Gdx.input.isKeyPressed(Keys.DOWN)) box.y -= 200 * Gdx.graphics.getDeltaTime
+    //if(Gdx.input.isKeyPressed(Keys.UP)) box.y += 200 * Gdx.graphics.getDeltaTime
+
+    // Check for user input and move the cursor as specified.
+    if(Gdx.input.isKeyPressed(Keys.RIGHT) && cursorPosition == 1) cursorPosition = 4
+    if(Gdx.input.isKeyPressed(Keys.RIGHT) && cursorPosition == 2) cursorPosition = 3
+    if(Gdx.input.isKeyPressed(Keys.LEFT) && cursorPosition == 3) cursorPosition = 2
+    if(Gdx.input.isKeyPressed(Keys.LEFT) && cursorPosition == 4) cursorPosition = 1
+    if(Gdx.input.isKeyPressed(Keys.DOWN) && cursorPosition == 2) cursorPosition = 1
+    if(Gdx.input.isKeyPressed(Keys.DOWN) && cursorPosition == 3) cursorPosition = 4
+    if(Gdx.input.isKeyPressed(Keys.UP) && cursorPosition == 1) cursorPosition = 2
+    if(Gdx.input.isKeyPressed(Keys.UP) && cursorPosition == 4) cursorPosition = 3
+
+    if(Gdx.input.isKeyPressed(Keys.Z)) playSelect = Some(cursorPosition)
 
     // Make sure the sprite stays within the screen bounds
-    if(box.x < 0) box.x = 0
-    if(box.x > width - 64) box.x = width - 64
-    if(box.y < 0) box.y = 0
-    if(box.y > height - 64) box.y = height - 64
+    //if(box.x < 0) box.x = 0
+    //if(box.x > width - 64) box.x = width - 64
+    //if(box.y < 0) box.y = 0
+    //if(box.y > height - 64) box.y = height - 64
+  }
+
+  private def executePlay() = {
+    val showText = playSelect match {
+      case Some(cursor) => s"play$cursor selected!"
+      case None => "select a play"
+    }
+    val menuFont = pokemonFont.generateFont(smallFontSize)
+    batch.setProjectionMatrix(camera.combined)
+    batch.begin()
+    menuFont.draw(batch, showText, width / 2, height / 2)
+    batch.end()
   }
 
   private def drawMenu(): Unit = {
@@ -106,13 +135,35 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     // draw menu text
     val menuFont = pokemonFont.generateFont(smallFontSize)
     val menuPadding = 40
+    val playMenuPosition1 = (buffer + menuPadding, buffer + menuBoxHeight/2)
+    val playMenuPosition2 = (buffer + menuPadding, buffer + menuBoxHeight + menuBoxHeight/2)
+    val playMenuPosition3 = (buffer + menuPadding + menuBoxWidth, buffer + menuBoxHeight + menuBoxHeight/2)
+    val playMenuPosition4 = (buffer + menuPadding + menuBoxWidth, buffer + menuBoxHeight/2)
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
-    menuFont.draw(batch, "play1", buffer + menuPadding, buffer + menuBoxHeight/2)
-    menuFont.draw(batch, "play2", buffer + menuPadding, buffer + menuBoxHeight + menuBoxHeight/2)
-    menuFont.draw(batch, "play3", buffer + menuPadding + menuBoxWidth, buffer + menuBoxHeight + menuBoxHeight/2)
-    menuFont.draw(batch, "play4", buffer + menuPadding + menuBoxWidth, buffer + menuBoxHeight/2)
+    menuFont.draw(batch, "play1", playMenuPosition1._1, playMenuPosition1._2)
+    menuFont.draw(batch, "play2", playMenuPosition2._1, playMenuPosition2._2)
+    menuFont.draw(batch, "play3", playMenuPosition3._1, playMenuPosition3._2)
+    menuFont.draw(batch, "play4", playMenuPosition4._1, playMenuPosition4._2)
     batch.end()
+
+    // draw cursor
+    val cursorWidthPadding = 5
+    val cursorHeightPadding = smallFontSize.size / 2
+    val cursorWidth = 8
+    val cursorHalfHeight = 6
+    val cursorDrawPosition = cursorPosition match {
+      case 1 => playMenuPosition1
+      case 2 => playMenuPosition2
+      case 3 => playMenuPosition3
+      case 4 => playMenuPosition4
+      // default
+      case _ => playMenuPosition2
+    }
+    shapeRenderer.begin(ShapeType.Filled)
+    shapeRenderer.setColor(0, 0, 0, 0)
+    shapeRenderer.triangle(cursorDrawPosition._1 - cursorWidthPadding, cursorDrawPosition._2 - cursorHeightPadding, cursorDrawPosition._1 - cursorWidthPadding - cursorWidth, cursorDrawPosition._2 + cursorHalfHeight - cursorHeightPadding, cursorDrawPosition._1 - cursorWidthPadding - cursorWidth, cursorDrawPosition._2 - cursorHalfHeight - cursorHeightPadding)
+    shapeRenderer.end()
   }
 
   /**
@@ -139,6 +190,9 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     smallFontSize = new FreeTypeFontParameter()
     smallFontSize.size = 12
     smallFontSize.color = Color.BLACK
+
+    // init selector
+    playSelect = None
 
   }
 
