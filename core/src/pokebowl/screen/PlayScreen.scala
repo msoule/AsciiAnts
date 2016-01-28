@@ -1,7 +1,9 @@
 package pokebowl.screen
 
 import com.badlogic.gdx.Input.Keys
-import com.badlogic.gdx.graphics.g2d.SpriteBatch
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
+import com.badlogic.gdx.graphics.g2d.{BitmapFont, SpriteBatch}
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, Texture}
@@ -9,7 +11,9 @@ import com.badlogic.gdx.math.{Rectangle, Vector3}
 import com.badlogic.gdx.{Gdx, InputAdapter, Screen}
 
 /**
-  * Created by msoule on 1/26/16.
+  * The main play screen of the game.
+  *
+  * @author Mark Soule on 1/26/16.
   */
 class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) extends InputAdapter with Screen {
 
@@ -18,6 +22,8 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
   var camera: OrthographicCamera = _
   var box: Rectangle = _
   var testSprite: Texture = _
+  var pokemonFont: FreeTypeFontGenerator = _
+  var smallFontSize: FreeTypeFontParameter = _
 
   override def resize(width: Int, height: Int): Unit = {
 
@@ -28,7 +34,7 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
   }
 
   override def dispose(): Unit = {
-
+    pokemonFont.dispose()
   }
 
   override def pause(): Unit = {
@@ -96,6 +102,17 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     shapeRenderer.rect(buffer + menuBoxWidth, buffer, menuBoxWidth, menuBoxHeight)
 
     shapeRenderer.end()
+
+    // draw menu text
+    val menuFont = pokemonFont.generateFont(smallFontSize)
+    val menuPadding = 40
+    batch.setProjectionMatrix(camera.combined)
+    batch.begin()
+    menuFont.draw(batch, "play1", buffer + menuPadding, buffer + menuBoxHeight/2)
+    menuFont.draw(batch, "play2", buffer + menuPadding, buffer + menuBoxHeight + menuBoxHeight/2)
+    menuFont.draw(batch, "play3", buffer + menuPadding + menuBoxWidth, buffer + menuBoxHeight + menuBoxHeight/2)
+    menuFont.draw(batch, "play4", buffer + menuPadding + menuBoxWidth, buffer + menuBoxHeight/2)
+    batch.end()
   }
 
   /**
@@ -116,6 +133,13 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     box.y = 20; // bottom left corner of the bucket is 20 pixels above the bottom screen edge
     box.width = 64
     box.height = 64
+
+    // init fonts
+    pokemonFont = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Pokemon GB.ttf"))
+    smallFontSize = new FreeTypeFontParameter()
+    smallFontSize.size = 12
+    smallFontSize.color = Color.BLACK
+
   }
 
   override def resume(): Unit = {
