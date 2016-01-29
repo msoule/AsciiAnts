@@ -9,6 +9,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, Texture}
 import com.badlogic.gdx.math.{Rectangle, Vector3}
 import com.badlogic.gdx.{Gdx, InputAdapter, Screen}
+import pokebowl.controller.PlayMode
+import pokebowl.controller.PlayMode.PlayMode
+
+import scala.util.Random
 
 /**
   * The main play screen of the game.
@@ -26,6 +30,12 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
   var smallFontSize: FreeTypeFontParameter = _
   var cursorPosition = 2
   var playSelect: Option[Int] = _
+  var playMode: PlayMode = _
+  var textToDraw: Seq[String] = Seq()
+
+  val PLAYS_PER_QUARTER = 3
+  var playCount = 0
+  var currentQuarter = 1
 
   override def resize(width: Int, height: Int): Unit = {
 
@@ -60,22 +70,61 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     // tell the camera to update its matrices.
     camera.update()
 
+    playMode match {
+      case PlayMode.SelectPlay => controlMenu(delta)
+      case PlayMode.ScrollText => controlTextBox(delta)
+    }
+  }
+
+  private def npcMove(): Seq[String] = {
+    Seq(s"npc chooses play${new Random().nextInt(3) + 1}")
+  }
+
+  private def playEndResults: Seq[String] = {
+    var messages = Seq[String]()
+
+    // do calculations and stuff
+
+    // track game clock
+    playCount += 1
+    messages = messages ++ Seq(s"Play #$playCount")
+    if(playCount >= PLAYS_PER_QUARTER) {
+      messages = messages ++ Seq(s"Quarter $currentQuarter is over")
+      currentQuarter += 1
+      currentQuarter match {
+        case 3 => messages = messages ++ Seq(s"Halftime!", s"Quarter $currentQuarter begins!")
+        case 5 => messages = messages ++ Seq(s"Game over!")
+        case _ => messages = messages ++ Seq(s"Quarter $currentQuarter begins!")
+      }
+      playCount = 0
+    }
+    messages
+  }
+
+  private def triggerTextBox(cursor: Int) = {
+    // player's choice
+    textToDraw = textToDraw ++ Seq(s"play$cursor selected!")
+    textToDraw = textToDraw ++ npcMove
+    textToDraw = textToDraw ++ playEndResults
+    playMode = PlayMode.ScrollText
+  }
+
+  private def controlMenu(delta: Float): Unit = {
     // tell the SpriteBatch to render in the
     // coordinate system specified by the camera.
-//    batch.setProjectionMatrix(camera.combined)
-//    batch.begin()
-//    batch.draw(testSprite, box.x, box.y)
-//    batch.end()
+    //    batch.setProjectionMatrix(camera.combined)
+    //    batch.begin()
+    //    batch.draw(testSprite, box.x, box.y)
+    //    batch.end()
     drawMenu()
-    executePlay()
 
     // process user input
-    if(Gdx.input.isTouched()) {
-      val touchPos: Vector3 = new Vector3()
-      touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0)
-      camera.unproject(touchPos)
-      box.x = touchPos.x - 64 / 2
-    }
+    //    if(Gdx.input.isTouched()) {
+    //      val touchPos: Vector3 = new Vector3()
+    //      touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0)
+    //      camera.unproject(touchPos)
+    //      box.x = touchPos.x - 64 / 2
+    //    }
 
     // Check for user input and move the box as specified.
     //if(Gdx.input.isKeyPressed(Keys.LEFT)) box.x -= 200 * Gdx.graphics.getDeltaTime
@@ -84,16 +133,16 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     //if(Gdx.input.isKeyPressed(Keys.UP)) box.y += 200 * Gdx.graphics.getDeltaTime
 
     // Check for user input and move the cursor as specified.
-    if(Gdx.input.isKeyPressed(Keys.RIGHT) && cursorPosition == 1) cursorPosition = 4
-    if(Gdx.input.isKeyPressed(Keys.RIGHT) && cursorPosition == 2) cursorPosition = 3
-    if(Gdx.input.isKeyPressed(Keys.LEFT) && cursorPosition == 3) cursorPosition = 2
-    if(Gdx.input.isKeyPressed(Keys.LEFT) && cursorPosition == 4) cursorPosition = 1
-    if(Gdx.input.isKeyPressed(Keys.DOWN) && cursorPosition == 2) cursorPosition = 1
-    if(Gdx.input.isKeyPressed(Keys.DOWN) && cursorPosition == 3) cursorPosition = 4
-    if(Gdx.input.isKeyPressed(Keys.UP) && cursorPosition == 1) cursorPosition = 2
-    if(Gdx.input.isKeyPressed(Keys.UP) && cursorPosition == 4) cursorPosition = 3
+    if (Gdx.input.isKeyPressed(Keys.RIGHT) && cursorPosition == 1) cursorPosition = 4
+    if (Gdx.input.isKeyPressed(Keys.RIGHT) && cursorPosition == 2) cursorPosition = 3
+    if (Gdx.input.isKeyPressed(Keys.LEFT) && cursorPosition == 3) cursorPosition = 2
+    if (Gdx.input.isKeyPressed(Keys.LEFT) && cursorPosition == 4) cursorPosition = 1
+    if (Gdx.input.isKeyPressed(Keys.DOWN) && cursorPosition == 2) cursorPosition = 1
+    if (Gdx.input.isKeyPressed(Keys.DOWN) && cursorPosition == 3) cursorPosition = 4
+    if (Gdx.input.isKeyPressed(Keys.UP) && cursorPosition == 1) cursorPosition = 2
+    if (Gdx.input.isKeyPressed(Keys.UP) && cursorPosition == 4) cursorPosition = 3
 
-    if(Gdx.input.isKeyPressed(Keys.Z)) playSelect = Some(cursorPosition)
+    if (Gdx.input.isKeyJustPressed(Keys.Z)) triggerTextBox(cursorPosition)
 
     // Make sure the sprite stays within the screen bounds
     //if(box.x < 0) box.x = 0
@@ -102,22 +151,23 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     //if(box.y > height - 64) box.y = height - 64
   }
 
-  private def executePlay() = {
-    val showText = playSelect match {
-      case Some(cursor) => s"play$cursor selected!"
-      case None => "select a play"
+  private def controlTextBox(delta: Float) = {
+    drawTextBox()
+
+    if (Gdx.input.isKeyJustPressed(Keys.Z)) {
+      textToDraw = textToDraw.tail
+      if (textToDraw.isEmpty) {
+        playMode = PlayMode.SelectPlay
+      }
     }
-    val menuFont = pokemonFont.generateFont(smallFontSize)
-    batch.setProjectionMatrix(camera.combined)
-    batch.begin()
-    menuFont.draw(batch, showText, width / 2, height / 2)
-    batch.end()
   }
 
   private def drawMenu(): Unit = {
     val buffer = 40
     val menuBoxWidth = 160
     val menuBoxHeight = 90
+
+    // draw menu box
     shapeRenderer.setProjectionMatrix(camera.combined)
     shapeRenderer.begin(ShapeType.Line)
     shapeRenderer.setColor(0, 0, 0, 0)
@@ -129,7 +179,6 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     shapeRenderer.rect(buffer + menuBoxWidth, buffer + menuBoxHeight, menuBoxWidth, menuBoxHeight)
     // bottom right
     shapeRenderer.rect(buffer + menuBoxWidth, buffer, menuBoxWidth, menuBoxHeight)
-
     shapeRenderer.end()
 
     // draw menu text
@@ -166,6 +215,24 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     shapeRenderer.end()
   }
 
+  private def drawTextBox(): Unit = {
+    val startXY = (width / 2, height / 2)
+    val textBoxWidth = 200
+    val textBoxHeight = 100
+    shapeRenderer.setProjectionMatrix(camera.combined)
+    shapeRenderer.begin(ShapeType.Line)
+    shapeRenderer.setColor(0, 0, 0, 0)
+    shapeRenderer.rect(startXY._1, startXY._2, textBoxWidth, textBoxHeight)
+    shapeRenderer.end()
+
+    val menuFont = pokemonFont.generateFont(smallFontSize)
+    val textBuffer = 10
+    batch.setProjectionMatrix(camera.combined)
+    batch.begin()
+    menuFont.draw(batch, textToDraw.head, startXY._1 + textBuffer, startXY._2 + textBoxHeight / 2)
+    batch.end()
+  }
+
   /**
     * Initializes the screen at creation.
     */
@@ -193,6 +260,7 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
 
     // init selector
     playSelect = None
+    playMode = PlayMode.SelectPlay
 
   }
 
