@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.{Rectangle, Vector3}
 import com.badlogic.gdx.{Gdx, InputAdapter, Screen}
 import pokebowl.controller.PlayMode
 import pokebowl.controller.PlayMode.PlayMode
+import pokebowl.model.{PlayCalculator, DenverBroncos, Team, CarolinaPanthers}
 
 import scala.util.Random
 
@@ -36,6 +37,9 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
   val PLAYS_PER_QUARTER = 3
   var playCount = 0
   var currentQuarter = 1
+
+  var playerTeam: Team = _
+  var npcTeam: Team = _
 
   override def resize(width: Int, height: Int): Unit = {
 
@@ -76,14 +80,27 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     }
   }
 
-  private def npcMove(): Seq[String] = {
-    Seq(s"npc chooses play${new Random().nextInt(3) + 1}")
+  private def npcMove(playIndex: Int): Seq[String] = {
+    Seq(s"${npcTeam.name} do a ${npcTeam.plays(playIndex).getDisplayText()}")
   }
 
-  private def playEndResults: Seq[String] = {
+  private def playerMove(index: Int): Seq[String] = {
+    Seq(s"${playerTeam.name} do a ${playerTeam.plays(index).getDisplayText()}")
+  }
+
+  private def calculatePlayResults(playerPlay: Int, npcPlay: Int): Seq[String] = {
+    val playerOdds = playerTeam.plays(playerPlay).calculateOdds(playerTeam)
+    val npcOdds = npcTeam.plays(npcPlay).calculateOdds(npcTeam)
+    // todo flip based on who is on offence and who is on defense
+    val result = PlayCalculator.calculatePlayResults(playerOdds, npcOdds)
+    PlayCalculator.calculateResultEffects(playerTeam, npcTeam, result)
+  }
+
+  private def playEndResults(playerPlay: Int, npcPlay: Int): Seq[String] = {
     var messages = Seq[String]()
 
     // do calculations and stuff
+    messages = messages ++ calculatePlayResults(playerPlay, npcPlay)
 
     // track game clock
     playCount += 1
@@ -103,9 +120,12 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
 
   private def triggerTextBox(cursor: Int) = {
     // player's choice
-    textToDraw = textToDraw ++ Seq(s"play$cursor selected!")
-    textToDraw = textToDraw ++ npcMove
-    textToDraw = textToDraw ++ playEndResults
+    textToDraw = textToDraw ++ playerMove(cursor - 1)
+    // npc's choice
+    val choice = new Random().nextInt(4)
+    textToDraw = textToDraw ++ npcMove(choice)
+    // Calculate results of play and advance game clock.
+    textToDraw = textToDraw ++ playEndResults(cursor - 1, choice)
     playMode = PlayMode.ScrollText
   }
 
@@ -190,10 +210,10 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     val playMenuPosition4 = (buffer + menuPadding + menuBoxWidth, buffer + menuBoxHeight/2)
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
-    menuFont.draw(batch, "play1", playMenuPosition1._1, playMenuPosition1._2)
-    menuFont.draw(batch, "play2", playMenuPosition2._1, playMenuPosition2._2)
-    menuFont.draw(batch, "play3", playMenuPosition3._1, playMenuPosition3._2)
-    menuFont.draw(batch, "play4", playMenuPosition4._1, playMenuPosition4._2)
+    menuFont.draw(batch, playerTeam.plays(0).getDisplayText(), playMenuPosition1._1, playMenuPosition1._2)
+    menuFont.draw(batch, playerTeam.plays(1).getDisplayText(), playMenuPosition2._1, playMenuPosition2._2)
+    menuFont.draw(batch, playerTeam.plays(2).getDisplayText(), playMenuPosition3._1, playMenuPosition3._2)
+    menuFont.draw(batch, playerTeam.plays(3).getDisplayText(), playMenuPosition4._1, playMenuPosition4._2)
     batch.end()
 
     // draw cursor
@@ -262,6 +282,9 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     playSelect = None
     playMode = PlayMode.SelectPlay
 
+    // init player
+    playerTeam = CarolinaPanthers.team
+    npcTeam = DenverBroncos.team
   }
 
   override def resume(): Unit = {
