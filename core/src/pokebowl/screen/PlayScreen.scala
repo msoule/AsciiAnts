@@ -48,9 +48,9 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
   }
 
   override def dispose(): Unit = {
-    pokemonFont.dispose()
-    shapeRenderer.dispose()
-    batch.dispose()
+    if(pokemonFont != null) pokemonFont.dispose()
+    if(shapeRenderer != null) shapeRenderer.dispose()
+    if(batch != null) batch.dispose()
   }
 
   override def pause(): Unit = {

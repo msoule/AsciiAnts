@@ -1,10 +1,13 @@
 package pokebowl.model.team
 
+import pokebowl.model.team.StatGlossary.StatGlossary
+
 /**
-  * Created by msoule on 1/26/16.
+  * @author Mark Soule on 1/26/16.
   */
 case class Player(
-                  name: String,
+                  first: String,
+                  last: String,
                   number: Int,
-                  stats: Int
+                  stats: Map[StatGlossary, Double]
                  )
