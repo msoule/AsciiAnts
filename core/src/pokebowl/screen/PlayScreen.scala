@@ -293,7 +293,15 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     playerTeam = CarolinaPanthers.team
     npcTeam = DenverBroncos.team
 
-    gameState = new GameState(playerTeam, npcTeam)
+    if(game.playerHome) {
+      gameState = new GameState(playerTeam, npcTeam)
+      textToDraw = textToDraw :+ s"${playerTeam.location} ${playerTeam.name} will kickoff"
+    } else {
+      gameState = new GameState(npcTeam, playerTeam)
+      textToDraw = textToDraw :+ s"${npcTeam.location} ${npcTeam.name} will kickoff"
+    }
+
+    drawText = true
     gameState.playMode = PlayMode.KickOff
   }
 

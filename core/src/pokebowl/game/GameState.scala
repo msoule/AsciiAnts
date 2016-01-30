@@ -15,7 +15,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   var lineOfScrimmage: Int = 0
   var firstDownMarker: Int = 10
   var down: Int = 1
-  var possession = awayTeam
+  var possession = homeTeam
   var playMode: PlayMode = PlayMode.SelectPlay
   var playCount = 0
   var currentQuarter = 1

@@ -67,7 +67,8 @@ class IntroScreen(width: Float, height: Float, game: Application, background: Co
 
     drawTitleScreen()
 
-    if (Gdx.input.isKeyJustPressed(Keys.Z)) game.startGamePlay()
+    val playerHome = new Random().nextBoolean()
+    if (Gdx.input.isKeyJustPressed(Keys.Z)) game.startGamePlay(playerHome)
   }
 
   private def drawTitleScreen(): Unit = {
