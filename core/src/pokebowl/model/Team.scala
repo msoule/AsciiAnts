@@ -5,7 +5,7 @@ package pokebowl.model
   */
 case class Team(
                  players: Seq[Player],
-                 plays: Array[Play],
+                 var plays: Array[Play],
                  stats: Int,
                  name: String,
                  location: String

@@ -2,7 +2,7 @@ package pokebowl.game
 
 import pokebowl.controller.PlayMode
 import pokebowl.controller.PlayMode._
-import pokebowl.model.Team
+import pokebowl.model.{ZoneCoverage, ScreenPass, Play, Team}
 
 /**
   * Tracks the state of the football game.
@@ -66,7 +66,24 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   }
 
   def changePossession(): Unit = {
-    if(possession == awayTeam) possession = homeTeam else possession = awayTeam
+    if(possession == awayTeam) {
+      possession = homeTeam
+      homeTeam.plays = getOffensivePlays()
+      awayTeam.plays = getDefensivePlays()
+    } else {
+      possession = awayTeam
+      awayTeam.plays = getOffensivePlays()
+      homeTeam.plays = getDefensivePlays()
+
+    }
+  }
+
+  private def getOffensivePlays(): Array[Play] = {
+    Array(new ScreenPass, new ScreenPass, new ScreenPass, new ScreenPass)
+  }
+
+  private def getDefensivePlays(): Array[Play] = {
+    Array(new ZoneCoverage, new ZoneCoverage, new ZoneCoverage, new ZoneCoverage)
   }
 
   def advanceGameClock(): Seq[String] = {
@@ -100,7 +117,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
       s"opponent's $yardString"
   }
 
-  def getNonPossesingTeam = {
+  def getNonPossessingTeam = {
     if(possession == awayTeam) homeTeam else awayTeam
   }
 
