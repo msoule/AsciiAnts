@@ -17,7 +17,7 @@ object PlayCalculator {
   }
 
   def calculateResultEffects(offense: Team, defense: Team, result: PlayResult, state: GameState): Seq[String] = {
-    Seq("The play happened")
+    state.changeLineOfScrimmage(5)
   }
 
   private def calculatePlayResults(playerPlay: Int, npcPlay: Int, state: GameState): Seq[String] = {
@@ -26,6 +26,28 @@ object PlayCalculator {
     // todo flip based on who is on offence and who is on defense
     val result = PlayCalculator.calculatePlayResults(playerOdds, npcOdds)
     calculateResultEffects(state.getHomeTeam, state.getAwayTeam, result, state)
+  }
+
+  def kickOffResults(state: GameState): Seq[String] = {
+    var messages = Seq[String]()
+    val kickingTeamOdds = new KickOff().calculateOdds(state.possession)
+    val receivingTeamOdds = new ReceiveKickOff().calculateOdds(state.getNonPossesingTeam)
+    val result = PlayCalculator.calculatePlayResults(kickingTeamOdds, receivingTeamOdds)
+    // todo calculate kickOff effects
+    messages = messages :+ "It was a touchback"
+    messages = messages ++ state.kickOff(20)
+    messages
+  }
+
+  def extraPointResults(state: GameState): Seq[String] = {
+    var messages = Seq[String]()
+    val kickingTeamOdds = new ExtraPoint().calculateOdds(state.possession)
+    val defendingTeamOdds = new DefendExtraPoint().calculateOdds(state.getNonPossesingTeam)
+    val result = PlayCalculator.calculatePlayResults(kickingTeamOdds, defendingTeamOdds)
+    // todo calculate extraPoint effects
+    messages = messages :+ "... It's good!"
+    state.scoreExtraPoint()
+    messages
   }
 
   def playEndResults(playerPlay: Int, npcPlay: Int, state: GameState): Seq[String] = {

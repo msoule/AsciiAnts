@@ -33,6 +33,7 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
   var cursorPosition = 2
   var playSelect: Option[Int] = _
   var textToDraw: Seq[String] = Seq()
+  var drawText: Boolean = false
   var gameState: GameState = _
 
   var playerTeam: Team = _
@@ -71,10 +72,27 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     // tell the camera to update its matrices.
     camera.update()
 
-    gameState.playMode match {
-      case PlayMode.SelectPlay => controlMenu(delta)
-      case PlayMode.ScrollText => controlTextBox(delta)
-    }
+    if(drawText)
+      controlTextBox(delta)
+    else
+      gameState.playMode match {
+        case PlayMode.KickOff => kickOffEvent()
+        case PlayMode.ExtraPoint => extraPointEvent()
+        case PlayMode.SelectPlay => controlMenu(delta)
+        //case PlayMode.ScrollText => controlTextBox(delta)
+      }
+  }
+
+  private def kickOffEvent() = {
+    textToDraw = textToDraw ++ PlayCalculator.kickOffResults(gameState)
+    drawText = true
+    //gameState.playMode = PlayMode.ScrollText
+  }
+
+  private def extraPointEvent() = {
+    textToDraw = textToDraw ++ PlayCalculator.extraPointResults(gameState)
+    drawText = true
+    //gameState.playMode = PlayMode.ScrollText
   }
 
   private def npcMove(playIndex: Int): Seq[String] = {
@@ -93,7 +111,8 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     textToDraw = textToDraw ++ npcMove(choice)
     // Calculate results of play and advance the game state.
     textToDraw = textToDraw ++ PlayCalculator.playEndResults(cursor - 1, choice, gameState)
-    gameState.playMode = PlayMode.ScrollText
+    drawText = true
+    //gameState.playMode = PlayMode.ScrollText
   }
 
   private def controlMenu(delta: Float): Unit = {
@@ -143,9 +162,9 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
 
     if (Gdx.input.isKeyJustPressed(Keys.Z)) {
       textToDraw = textToDraw.tail
-      if (textToDraw.isEmpty) {
-        gameState.playMode = PlayMode.SelectPlay
-      }
+      drawText = textToDraw.nonEmpty//if (textToDraw.isEmpty) {
+        //gameState.playMode = PlayMode.SelectPlay
+      //}
     }
   }
 
@@ -203,8 +222,8 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
   }
 
   private def drawTextBox(): Unit = {
-    val startXY = (width / 2, height / 2)
-    val textBoxWidth = 200
+    val startXY = (100, height / 2)
+    val textBoxWidth = 700
     val textBoxHeight = 100
     shapeRenderer.setProjectionMatrix(camera.combined)
     shapeRenderer.begin(ShapeType.Line)
@@ -253,6 +272,7 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     npcTeam = DenverBroncos.team
 
     gameState = new GameState(playerTeam, npcTeam)
+    gameState.playMode = PlayMode.KickOff
   }
 
   override def resume(): Unit = {
