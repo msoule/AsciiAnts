@@ -16,9 +16,9 @@ object PlayCalculator {
     state.changeLineOfScrimmage(1)
   }
 
-  private def calculatePlayEnd(offensePlay: Int, defencePlay: Int, state: GameState): Seq[String] = {
-    val offenceOdds = state.possession.plays(offensePlay).calculateOdds(state.getHomeTeam)
-    val defenceOdds = state.getNonPossessingTeam.plays(defencePlay).calculateOdds(state.getAwayTeam)
+  private def calculatePlayEnd(offensePlay: Play, defencePlay: Play, state: GameState): Seq[String] = {
+    val offenceOdds = offensePlay.calculateOdds(state.getHomeTeam)
+    val defenceOdds = defencePlay.calculateOdds(state.getAwayTeam)
     val result = calculatePlayResults(offenceOdds, defenceOdds)
     calculateResultEffects(state.getHomeTeam, state.getAwayTeam, result, state)
   }
@@ -31,15 +31,16 @@ object PlayCalculator {
     // todo calculate kickOff effects
     messages = messages :+ "It was a touchback"
     messages = messages ++ state.kickOff(20)
+    messages = messages ++ state.advanceGameClock()
     messages
   }
 
-  def PuntResults(state: GameState): Seq[String] = {
+  def puntResults(punt: Play, receive: Play, state: GameState): Seq[String] = {
     var messages = Seq[String]()
-    val kickingTeamOdds = new Punt().calculateOdds(state.possession)
-    val receivingTeamOdds = new ReceivePunt().calculateOdds(state.getNonPossessingTeam)
+    val kickingTeamOdds = punt.calculateOdds(state.possession)
+    val receivingTeamOdds = receive.calculateOdds(state.getNonPossessingTeam)
     val result = calculatePlayResults(kickingTeamOdds, receivingTeamOdds)
-    // todo calculate kickOff effects
+    // todo calculate punt effects
     messages = messages :+ "Fair catch"
     messages = messages ++ state.punt(20)
     messages
@@ -56,10 +57,27 @@ object PlayCalculator {
     messages
   }
 
-  def playEndResults(playerPlay: Int, npcPlay: Int, state: GameState): Seq[String] = {
+  private def displayMove(teamName: String, play: Play): String = {
+    s"$teamName ${play.getDisplayText()}"
+  }
+
+  def playEndResults(offenceChoice: Int, defenseChoice: Int, state: GameState): Seq[String] = {
     var messages = Seq[String]()
     // do calculations and stuff
-    messages = messages ++ calculatePlayEnd(playerPlay, npcPlay, state)
+    val offencePlay = state.possession.plays(offenceChoice)
+    offencePlay match {
+      //case offP: FieldGoal =>
+      case offP: Punt =>
+        val punt = new Punt
+        val receive = new ReceivePunt
+        messages = messages ++ Seq(displayMove(state.possession.name, punt), displayMove(state.getNonPossessingTeam.name, receive))
+        puntResults(punt, receive, state)
+      case _ =>
+        val defensePlay = state.getNonPossessingTeam.plays(defenseChoice)
+        messages = messages ++ Seq(displayMove(state.possession.name, offencePlay), displayMove(state.getNonPossessingTeam.name, defensePlay))
+        messages = messages ++ calculatePlayEnd(offencePlay, defensePlay, state)
+    }
+
     // track game clock
     messages = messages ++ state.advanceGameClock()
     messages

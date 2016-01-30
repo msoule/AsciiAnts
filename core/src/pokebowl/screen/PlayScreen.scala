@@ -94,13 +94,13 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     drawText = true
   }
 
-  private def npcMove(playIndex: Int): Seq[String] = {
-    Seq(s"${npcTeam.name} do a ${npcTeam.plays(playIndex).getDisplayText()}")
-  }
-
-  private def playerMove(index: Int): Seq[String] = {
-    Seq(s"${playerTeam.name} do a ${playerTeam.plays(index).getDisplayText()}")
-  }
+//  private def npcMove(playIndex: Int): Seq[String] = {
+//    Seq(s"${npcTeam.name} do a ${npcTeam.plays(playIndex).getDisplayText()}")
+//  }
+//
+//  private def playerMove(index: Int): Seq[String] = {
+//    Seq(s"${playerTeam.name} do a ${playerTeam.plays(index).getDisplayText()}")
+//  }
 
   private def triggerTextBox(cursor: Int) = {
     // player's choice
@@ -113,13 +113,13 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     if(playerTeam != gameState.possession) {
       offenceChoice = npcChoice
       defenceChoice = playerChoice
-      textToDraw = textToDraw ++ npcMove(npcChoice)
-      textToDraw = textToDraw ++ playerMove(playerChoice)
+      //textToDraw = textToDraw ++ npcMove(npcChoice)
+      //textToDraw = textToDraw ++ playerMove(playerChoice)
     } else {
       offenceChoice = playerChoice
       defenceChoice = npcChoice
-      textToDraw = textToDraw ++ playerMove(playerChoice)
-      textToDraw = textToDraw ++ npcMove(npcChoice)
+      //textToDraw = textToDraw ++ playerMove(playerChoice)
+      //textToDraw = textToDraw ++ npcMove(npcChoice)
     }
 
     // Calculate results of play and advance the game state.

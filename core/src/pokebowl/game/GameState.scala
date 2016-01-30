@@ -2,7 +2,7 @@ package pokebowl.game
 
 import pokebowl.controller.PlayMode
 import pokebowl.controller.PlayMode._
-import pokebowl.model.play.{ZoneCoverage, ScreenPass, Play}
+import pokebowl.model.play.{Punt, ZoneCoverage, ScreenPass, Play}
 import pokebowl.model.team.Team
 
 /**
@@ -81,21 +81,21 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   def changePossession(): Unit = {
     if(possession == awayTeam) {
       possession = homeTeam
-      homeTeam.plays = getOffensivePlays()
-      awayTeam.plays = getDefensivePlays()
+      homeTeam.plays = getOffensivePlays
+      awayTeam.plays = getDefensivePlays
     } else {
       possession = awayTeam
-      awayTeam.plays = getOffensivePlays()
-      homeTeam.plays = getDefensivePlays()
+      awayTeam.plays = getOffensivePlays
+      homeTeam.plays = getDefensivePlays
     }
     down = 1
   }
 
-  private def getOffensivePlays(): Array[Play] = {
-    Array(new ScreenPass, new ScreenPass, new ScreenPass, new ScreenPass)
+  private def getOffensivePlays: Array[Play] = {
+    Array(new ScreenPass, new ScreenPass, new ScreenPass, new Punt)
   }
 
-  private def getDefensivePlays(): Array[Play] = {
+  private def getDefensivePlays: Array[Play] = {
     Array(new ZoneCoverage, new ZoneCoverage, new ZoneCoverage, new ZoneCoverage)
   }
 
