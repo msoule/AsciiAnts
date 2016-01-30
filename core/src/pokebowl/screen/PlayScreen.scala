@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.{Rectangle, Vector3}
 import com.badlogic.gdx.{Gdx, InputAdapter, Screen}
 import pokebowl.controller.PlayMode
 import pokebowl.controller.PlayMode.PlayMode
+import pokebowl.game.GameState
 import pokebowl.model.{PlayCalculator, DenverBroncos, Team, CarolinaPanthers}
 
 import scala.util.Random
@@ -31,12 +32,8 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
   var smallFontSize: FreeTypeFontParameter = _
   var cursorPosition = 2
   var playSelect: Option[Int] = _
-  var playMode: PlayMode = _
   var textToDraw: Seq[String] = Seq()
-
-  val PLAYS_PER_QUARTER = 3
-  var playCount = 0
-  var currentQuarter = 1
+  var gameState: GameState = _
 
   var playerTeam: Team = _
   var npcTeam: Team = _
@@ -74,7 +71,7 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     // tell the camera to update its matrices.
     camera.update()
 
-    playMode match {
+    gameState.playMode match {
       case PlayMode.SelectPlay => controlMenu(delta)
       case PlayMode.ScrollText => controlTextBox(delta)
     }
@@ -88,45 +85,15 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     Seq(s"${playerTeam.name} do a ${playerTeam.plays(index).getDisplayText()}")
   }
 
-  private def calculatePlayResults(playerPlay: Int, npcPlay: Int): Seq[String] = {
-    val playerOdds = playerTeam.plays(playerPlay).calculateOdds(playerTeam)
-    val npcOdds = npcTeam.plays(npcPlay).calculateOdds(npcTeam)
-    // todo flip based on who is on offence and who is on defense
-    val result = PlayCalculator.calculatePlayResults(playerOdds, npcOdds)
-    PlayCalculator.calculateResultEffects(playerTeam, npcTeam, result)
-  }
-
-  private def playEndResults(playerPlay: Int, npcPlay: Int): Seq[String] = {
-    var messages = Seq[String]()
-
-    // do calculations and stuff
-    messages = messages ++ calculatePlayResults(playerPlay, npcPlay)
-
-    // track game clock
-    playCount += 1
-    messages = messages ++ Seq(s"Play #$playCount")
-    if(playCount >= PLAYS_PER_QUARTER) {
-      messages = messages ++ Seq(s"Quarter $currentQuarter is over")
-      currentQuarter += 1
-      currentQuarter match {
-        case 3 => messages = messages ++ Seq(s"Halftime!", s"Quarter $currentQuarter begins!")
-        case 5 => messages = messages ++ Seq(s"Game over!")
-        case _ => messages = messages ++ Seq(s"Quarter $currentQuarter begins!")
-      }
-      playCount = 0
-    }
-    messages
-  }
-
   private def triggerTextBox(cursor: Int) = {
     // player's choice
     textToDraw = textToDraw ++ playerMove(cursor - 1)
     // npc's choice
     val choice = new Random().nextInt(4)
     textToDraw = textToDraw ++ npcMove(choice)
-    // Calculate results of play and advance game clock.
-    textToDraw = textToDraw ++ playEndResults(cursor - 1, choice)
-    playMode = PlayMode.ScrollText
+    // Calculate results of play and advance the game state.
+    textToDraw = textToDraw ++ PlayCalculator.playEndResults(cursor - 1, choice, gameState)
+    gameState.playMode = PlayMode.ScrollText
   }
 
   private def controlMenu(delta: Float): Unit = {
@@ -177,7 +144,7 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     if (Gdx.input.isKeyJustPressed(Keys.Z)) {
       textToDraw = textToDraw.tail
       if (textToDraw.isEmpty) {
-        playMode = PlayMode.SelectPlay
+        gameState.playMode = PlayMode.SelectPlay
       }
     }
   }
@@ -280,11 +247,12 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
 
     // init selector
     playSelect = None
-    playMode = PlayMode.SelectPlay
 
     // init player
     playerTeam = CarolinaPanthers.team
     npcTeam = DenverBroncos.team
+
+    gameState = new GameState(playerTeam, npcTeam)
   }
 
   override def resume(): Unit = {
