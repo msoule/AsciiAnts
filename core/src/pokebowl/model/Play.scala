@@ -17,13 +17,13 @@ object PlayCalculator {
   }
 
   def calculateResultEffects(offense: Team, defense: Team, result: PlayResult, state: GameState): Seq[String] = {
-    state.changeLineOfScrimmage(5)
+    state.changeLineOfScrimmage(1)
   }
 
   private def calculatePlayResults(offensePlay: Int, defencePlay: Int, state: GameState): Seq[String] = {
     val offenceOdds = state.possession.plays(offensePlay).calculateOdds(state.getHomeTeam)
     val defenceOdds = state.getNonPossessingTeam.plays(defencePlay).calculateOdds(state.getAwayTeam)
-    val result = PlayCalculator.calculatePlayResults(offenceOdds, defenceOdds)
+    val result = calculatePlayResults(offenceOdds, defenceOdds)
     calculateResultEffects(state.getHomeTeam, state.getAwayTeam, result, state)
   }
 

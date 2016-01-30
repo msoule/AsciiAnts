@@ -257,7 +257,7 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
     menuFont.draw(batch, s"${gameState.awayScore} vs ${gameState.homeScore} Q${gameState.currentQuarter} D${gameState.down}", startXY._1, startXY._2)
-    menuFont.draw(batch, s"${gameState.lineOfScrimmage} yard line", startXY._1, startXY._2 - smallFontSize.size)
+    menuFont.draw(batch, s"${gameState.getFieldPositionText} yard line", startXY._1, startXY._2 - smallFontSize.size)
     batch.end()
   }
 

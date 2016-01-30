@@ -43,11 +43,14 @@ class GameState(homeTeam: Team, awayTeam: Team) {
       firstDownMarker = lineOfScrimmage + FIRST_DOWN_YARDS
       messages = messages :+ "First down!"
     }
+    else {
+      messages = messages ++ advanceDowns()
+    }
     messages
   }
 
   def scoreExtraPoint(): Seq[String] = {
-    addScore(possession, 1)
+    addScore(possession, EXTRA_POINT_SCORE)
     playMode = PlayMode.KickOff
     Seq("Extra point is good")
   }
@@ -74,8 +77,8 @@ class GameState(homeTeam: Team, awayTeam: Team) {
       possession = awayTeam
       awayTeam.plays = getOffensivePlays()
       homeTeam.plays = getDefensivePlays()
-
     }
+    down = 1
   }
 
   private def getOffensivePlays(): Array[Play] = {
@@ -84,6 +87,17 @@ class GameState(homeTeam: Team, awayTeam: Team) {
 
   private def getDefensivePlays(): Array[Play] = {
     Array(new ZoneCoverage, new ZoneCoverage, new ZoneCoverage, new ZoneCoverage)
+  }
+
+  def advanceDowns(): Seq[String] = {
+    down += 1
+    if(down > 4) {
+      changePossession()
+      Seq("Turnover!", s"${possession.name} will get the ball at $getFieldPositionText")
+    }
+    else {
+      Seq()
+    }
   }
 
   def advanceGameClock(): Seq[String] = {
@@ -110,7 +124,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
     val yardLine = (MAX_YARDS / 2) - Math.abs(intermediate)
     val yardString = s"$yardLine yard line"
     if(yardLine == (MAX_YARDS / 2))
-      yardString
+      s"the $yardString"
     else if(our)
       s"their $yardString"
     else
