@@ -8,9 +8,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, Texture}
 import com.badlogic.gdx.math.{Rectangle, Vector3}
-import com.badlogic.gdx.{Gdx, InputAdapter, Screen}
+import com.badlogic.gdx.{Game, Gdx, InputAdapter, Screen}
 import pokebowl.controller.PlayMode
 import pokebowl.controller.PlayMode.PlayMode
+import pokebowl.core.Application
 import pokebowl.game.GameState
 import pokebowl.model.{PlayCalculator, DenverBroncos, Team, CarolinaPanthers}
 
@@ -21,7 +22,7 @@ import scala.util.Random
   *
   * @author Mark Soule on 1/26/16.
   */
-class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) extends InputAdapter with Screen {
+class PlayScreen(width: Float, height: Float, game: Application, background: Color=Color.WHITE) extends InputAdapter with Screen {
 
   var batch: SpriteBatch = _
   var shapeRenderer: ShapeRenderer = _
@@ -81,20 +82,17 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
         case PlayMode.KickOff => kickOffEvent()
         case PlayMode.ExtraPoint => extraPointEvent()
         case PlayMode.SelectPlay => controlMenu(delta)
-        //case PlayMode.ScrollText => controlTextBox(delta)
       }
   }
 
   private def kickOffEvent() = {
     textToDraw = textToDraw ++ PlayCalculator.kickOffResults(gameState)
     drawText = true
-    //gameState.playMode = PlayMode.ScrollText
   }
 
   private def extraPointEvent() = {
     textToDraw = textToDraw ++ PlayCalculator.extraPointResults(gameState)
     drawText = true
-    //gameState.playMode = PlayMode.ScrollText
   }
 
   private def npcMove(playIndex: Int): Seq[String] = {
@@ -107,14 +105,27 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
 
   private def triggerTextBox(cursor: Int) = {
     // player's choice
-    textToDraw = textToDraw ++ playerMove(cursor - 1)
+    val playerChoice = cursor - 1
     // npc's choice
-    val choice = new Random().nextInt(4)
-    textToDraw = textToDraw ++ npcMove(choice)
+    val npcChoice = new Random().nextInt(4)
+
+    var offenceChoice = playerChoice
+    var defenceChoice = npcChoice
+    if(playerTeam != gameState.possession) {
+      offenceChoice = npcChoice
+      defenceChoice = playerChoice
+      textToDraw = textToDraw ++ npcMove(npcChoice)
+      textToDraw = textToDraw ++ playerMove(playerChoice)
+    } else {
+      offenceChoice = playerChoice
+      defenceChoice = npcChoice
+      textToDraw = textToDraw ++ playerMove(playerChoice)
+      textToDraw = textToDraw ++ npcMove(npcChoice)
+    }
+
     // Calculate results of play and advance the game state.
-    textToDraw = textToDraw ++ PlayCalculator.playEndResults(cursor - 1, choice, gameState)
+    textToDraw = textToDraw ++ PlayCalculator.playEndResults(offenceChoice, defenceChoice, gameState)
     drawText = true
-    //gameState.playMode = PlayMode.ScrollText
   }
 
   private def controlMenu(delta: Float): Unit = {
@@ -164,9 +175,7 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
 
     if (Gdx.input.isKeyJustPressed(Keys.Z)) {
       textToDraw = textToDraw.tail
-      drawText = textToDraw.nonEmpty//if (textToDraw.isEmpty) {
-        //gameState.playMode = PlayMode.SelectPlay
-      //}
+      drawText = textToDraw.nonEmpty
     }
   }
 

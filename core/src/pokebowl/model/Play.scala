@@ -20,11 +20,10 @@ object PlayCalculator {
     state.changeLineOfScrimmage(5)
   }
 
-  private def calculatePlayResults(playerPlay: Int, npcPlay: Int, state: GameState): Seq[String] = {
-    val playerOdds = state.getHomeTeam.plays(playerPlay).calculateOdds(state.getHomeTeam)
-    val npcOdds = state.getAwayTeam.plays(npcPlay).calculateOdds(state.getAwayTeam)
-    // todo flip based on who is on offence and who is on defense
-    val result = PlayCalculator.calculatePlayResults(playerOdds, npcOdds)
+  private def calculatePlayResults(offensePlay: Int, defencePlay: Int, state: GameState): Seq[String] = {
+    val offenceOdds = state.possession.plays(offensePlay).calculateOdds(state.getHomeTeam)
+    val defenceOdds = state.getNonPossesingTeam.plays(defencePlay).calculateOdds(state.getAwayTeam)
+    val result = PlayCalculator.calculatePlayResults(offenceOdds, defenceOdds)
     calculateResultEffects(state.getHomeTeam, state.getAwayTeam, result, state)
   }
 
