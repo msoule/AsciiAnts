@@ -9,6 +9,7 @@ import pokebowl.model.team.Team
 trait Play {
   def calculateOdds(team: Team): Array[PlayResult]
   def getDisplayText(): String
+  def getName(): String
 }
 
 

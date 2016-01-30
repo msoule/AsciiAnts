@@ -11,5 +11,7 @@ class DefendFieldGoal extends Play {
     Array.fill(100)(PlayResult.Average)
   }
 
-  override def getDisplayText(): String = "block field goal"
+  override def getDisplayText(): String = "try to block the Field Goal"
+
+  override def getName(): String = "BLOCK FIELD GOAL"
 }

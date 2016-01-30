@@ -11,5 +11,7 @@ class ReceiveKickOff extends Play {
     Array.fill(100)(PlayResult.Average)
   }
 
-  override def getDisplayText(): String = "receive kickoff"
+  override def getDisplayText(): String = "to return kickoff"
+
+  override def getName(): String = "RECEIVE KICKOFF"
 }

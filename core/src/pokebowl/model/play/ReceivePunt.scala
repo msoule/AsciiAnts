@@ -11,5 +11,7 @@ class ReceivePunt extends Play {
     Array.fill(100)(PlayResult.Average)
   }
 
-  override def getDisplayText(): String = "receive punt"
+  override def getDisplayText(): String = "to return Punt"
+
+  override def getName(): String = "RECEIVE PUNT"
 }

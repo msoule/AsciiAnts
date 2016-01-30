@@ -11,5 +11,7 @@ class FieldGoal extends Play {
     Array.fill(100)(PlayResult.Average)
   }
 
-  override def getDisplayText(): String = "field goal"
+  override def getDisplayText(): String = "will attempt Field Goal"
+
+  override def getName(): String = "FIELD GOAL"
 }

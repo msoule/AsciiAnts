@@ -2,7 +2,8 @@ package pokebowl.game
 
 import pokebowl.controller.PlayMode
 import pokebowl.controller.PlayMode._
-import pokebowl.model.play.{Punt, ZoneCoverage, ScreenPass, Play}
+import pokebowl.model.play.Punt
+import pokebowl.model.play._
 import pokebowl.model.team.Team
 
 /**
@@ -50,10 +51,14 @@ class GameState(homeTeam: Team, awayTeam: Team) {
     messages
   }
 
-  def scoreExtraPoint(): Seq[String] = {
+  def scoreExtraPoint() = {
     addScore(possession, EXTRA_POINT_SCORE)
     playMode = PlayMode.KickOff
-    Seq("Extra point is good")
+  }
+
+  def scoreFieldGoal() = {
+    addScore(possession, FIELD_GOAL_SCORE)
+    playMode = PlayMode.KickOff
   }
 
   def kickOff(fieldPosition: Int) = {
@@ -92,7 +97,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   }
 
   private def getOffensivePlays: Array[Play] = {
-    Array(new ScreenPass, new ScreenPass, new ScreenPass, new Punt)
+    Array(new ScreenPass, new ScreenPass, new Punt, new FieldGoal)
   }
 
   private def getDefensivePlays: Array[Play] = {

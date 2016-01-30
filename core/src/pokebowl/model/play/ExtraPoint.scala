@@ -11,5 +11,7 @@ class ExtraPoint extends Play {
     Array.fill(100)(PlayResult.Average)
   }
 
-  override def getDisplayText(): String = "extra point"
+  override def getDisplayText(): String = "will attempt Extra Point"
+
+  override def getName(): String = "EXTRA POINT"
 }

@@ -11,5 +11,7 @@ class DefendExtraPoint extends Play {
     Array.fill(100)(PlayResult.Average)
   }
 
-  override def getDisplayText(): String = "block extra point"
+  override def getDisplayText(): String = "try to block the Extra Point"
+
+  override def getName(): String = "BLOCK EXTRA POINT"
 }

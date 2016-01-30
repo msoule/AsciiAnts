@@ -11,5 +11,7 @@ class Punt extends Play {
     Array.fill(100)(PlayResult.Average)
   }
 
-  override def getDisplayText(): String = "punt"
+  override def getDisplayText(): String = "to Punt the ball"
+
+  override def getName(): String = "PUNT"
 }

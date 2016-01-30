@@ -46,6 +46,17 @@ object PlayCalculator {
     messages
   }
 
+  def fieldGoalResults(fieldGoal: Play, defense: Play, state: GameState): Seq[String] = {
+    var messages = Seq[String]()
+    val kickingTeamOdds = fieldGoal.calculateOdds(state.possession)
+    val defendingTeamOdds = defense.calculateOdds(state.getNonPossessingTeam)
+    val result = calculatePlayResults(kickingTeamOdds, defendingTeamOdds)
+    // todo calculate fieldGoal effects
+    messages = messages :+ "... It's good!"
+    state.scoreFieldGoal()
+    messages
+  }
+
   def extraPointResults(state: GameState): Seq[String] = {
     var messages = Seq[String]()
     val kickingTeamOdds = new ExtraPoint().calculateOdds(state.possession)
@@ -66,7 +77,11 @@ object PlayCalculator {
     // do calculations and stuff
     val offencePlay = state.possession.plays(offenceChoice)
     offencePlay match {
-      //case offP: FieldGoal =>
+      case offP: FieldGoal =>
+        val kick = new FieldGoal
+        val defend = new DefendFieldGoal
+        messages = messages ++ Seq(displayMove(state.possession.name, kick), displayMove(state.getNonPossessingTeam.name, defend))
+        fieldGoalResults(kick, defend, state)
       case offP: Punt =>
         val punt = new Punt
         val receive = new ReceivePunt

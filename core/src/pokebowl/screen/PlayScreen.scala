@@ -206,10 +206,10 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     val playMenuPosition4 = (buffer + menuPadding + menuBoxWidth, buffer + menuBoxHeight/2)
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
-    menuFont.draw(batch, playerTeam.plays(0).getDisplayText(), playMenuPosition1._1, playMenuPosition1._2)
-    menuFont.draw(batch, playerTeam.plays(1).getDisplayText(), playMenuPosition2._1, playMenuPosition2._2)
-    menuFont.draw(batch, playerTeam.plays(2).getDisplayText(), playMenuPosition3._1, playMenuPosition3._2)
-    menuFont.draw(batch, playerTeam.plays(3).getDisplayText(), playMenuPosition4._1, playMenuPosition4._2)
+    menuFont.draw(batch, playerTeam.plays(0).getName(), playMenuPosition1._1, playMenuPosition1._2)
+    menuFont.draw(batch, playerTeam.plays(1).getName(), playMenuPosition2._1, playMenuPosition2._2)
+    menuFont.draw(batch, playerTeam.plays(2).getName(), playMenuPosition3._1, playMenuPosition3._2)
+    menuFont.draw(batch, playerTeam.plays(3).getName(), playMenuPosition4._1, playMenuPosition4._2)
     batch.end()
 
     // draw cursor

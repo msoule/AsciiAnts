@@ -11,5 +11,7 @@ class ScreenPass extends Play {
     Array.fill(100)(PlayResult.Average)
   }
 
-  override def getDisplayText(): String = "screen pass"
+  override def getDisplayText(): String = "do a Screen Pass"
+
+  override def getName(): String = "SCREEN PASS"
 }

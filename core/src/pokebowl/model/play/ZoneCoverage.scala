@@ -11,5 +11,7 @@ class ZoneCoverage extends Play {
     Array.fill(100)(PlayResult.Average)
   }
 
-  override def getDisplayText(): String = "zone coverage"
+  override def getDisplayText(): String = "try a Zone Coverage"
+
+  override def getName(): String = "ZONE COVERAGE"
 }
