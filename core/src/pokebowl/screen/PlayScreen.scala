@@ -72,6 +72,8 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     // tell the camera to update its matrices.
     camera.update()
 
+    drawScoreBoard()
+
     if(drawText)
       controlTextBox(delta)
     else
@@ -236,6 +238,17 @@ class PlayScreen(width: Float, height: Float, background: Color=Color.WHITE) ext
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
     menuFont.draw(batch, textToDraw.head, startXY._1 + textBuffer, startXY._2 + textBoxHeight / 2)
+    batch.end()
+  }
+
+  private def drawScoreBoard(): Unit = {
+    val startXY = (100, height - 10)
+
+    val menuFont = pokemonFont.generateFont(smallFontSize)
+    batch.setProjectionMatrix(camera.combined)
+    batch.begin()
+    menuFont.draw(batch, s"${gameState.awayScore} vs ${gameState.homeScore} Q${gameState.currentQuarter} D${gameState.down}", startXY._1, startXY._2)
+    menuFont.draw(batch, s"${gameState.lineOfScrimmage} yard line", startXY._1, startXY._2 - smallFontSize.size)
     batch.end()
   }
 
