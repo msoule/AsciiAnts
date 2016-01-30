@@ -3,17 +3,16 @@ package pokebowl.screen
 import com.badlogic.gdx.Input.Keys
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
-import com.badlogic.gdx.graphics.g2d.{BitmapFont, SpriteBatch}
+import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, Texture}
-import com.badlogic.gdx.math.{Rectangle, Vector3}
-import com.badlogic.gdx.{Game, Gdx, InputAdapter, Screen}
+import com.badlogic.gdx.math.Rectangle
+import com.badlogic.gdx.{Gdx, InputAdapter, Screen}
 import pokebowl.controller.PlayMode
-import pokebowl.controller.PlayMode.PlayMode
 import pokebowl.core.Application
-import pokebowl.game.GameState
-import pokebowl.model.{PlayCalculator, DenverBroncos, Team, CarolinaPanthers}
+import pokebowl.game.{PlayCalculator, GameState}
+import pokebowl.model.team.{Team, DenverBroncos, CarolinaPanthers}
 
 import scala.util.Random
 
@@ -73,8 +72,6 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     // tell the camera to update its matrices.
     camera.update()
 
-    drawScoreBoard()
-
     if(drawText)
       controlTextBox(delta)
     else
@@ -83,6 +80,8 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
         case PlayMode.ExtraPoint => extraPointEvent()
         case PlayMode.SelectPlay => controlMenu(delta)
       }
+
+    drawScoreBoard()
   }
 
   private def kickOffEvent() = {

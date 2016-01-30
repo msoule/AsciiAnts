@@ -5,14 +5,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType
 import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, Texture}
-import com.badlogic.gdx.math.Rectangle
-import com.badlogic.gdx.{Game, Gdx, InputAdapter, Screen}
-import pokebowl.controller.PlayMode
+import com.badlogic.gdx.{Gdx, InputAdapter, Screen}
+
 import pokebowl.core.Application
-import pokebowl.game.GameState
-import pokebowl.model.{CarolinaPanthers, DenverBroncos, PlayCalculator, Team}
 
 import scala.util.Random
 

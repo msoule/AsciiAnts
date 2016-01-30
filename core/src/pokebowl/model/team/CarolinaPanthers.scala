@@ -1,4 +1,6 @@
-package pokebowl.model
+package pokebowl.model.team
+
+import pokebowl.model.play.ScreenPass
 
 /**
   * @author Mark Soule on 1/28/16.

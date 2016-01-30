@@ -2,7 +2,8 @@ package pokebowl.game
 
 import pokebowl.controller.PlayMode
 import pokebowl.controller.PlayMode._
-import pokebowl.model.{ZoneCoverage, ScreenPass, Play, Team}
+import pokebowl.model.play.{ZoneCoverage, ScreenPass, Play}
+import pokebowl.model.team.Team
 
 /**
   * Tracks the state of the football game.
@@ -61,7 +62,16 @@ class GameState(homeTeam: Team, awayTeam: Team) {
     firstDownMarker = lineOfScrimmage + FIRST_DOWN_YARDS
     down = 1
     playMode = PlayMode.SelectPlay
-    Seq(s"${possession.name} start possession at $getFieldPositionText")
+    Seq(s"${possession.name} to start possession at $getFieldPositionText")
+  }
+
+  def punt(fieldPosition: Int) = {
+    changePossession()
+    lineOfScrimmage = fieldPosition
+    firstDownMarker = lineOfScrimmage + FIRST_DOWN_YARDS
+    down = 1
+    playMode = PlayMode.SelectPlay
+    Seq(s"${possession.name} to start possession at $getFieldPositionText")
   }
 
   def addScore(scoringTeam: Team, amount: Int) = {

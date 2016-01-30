@@ -1,4 +1,4 @@
-package pokebowl.model
+package pokebowl.model.play
 
 /**
   * @author Mark Soule on 1/28/16.

@@ -1,4 +1,4 @@
-package pokebowl.model
+package pokebowl.model.team
 
 /**
   * Created by msoule on 1/26/16.

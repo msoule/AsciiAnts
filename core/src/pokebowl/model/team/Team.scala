@@ -1,4 +1,6 @@
-package pokebowl.model
+package pokebowl.model.team
+
+import pokebowl.model.play.Play
 
 /**
   * Created by msoule on 1/26/16.

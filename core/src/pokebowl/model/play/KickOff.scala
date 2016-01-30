@@ -1,6 +1,7 @@
-package pokebowl.model
+package pokebowl.model.play
 
-import pokebowl.model.PlayResult._
+import pokebowl.model.play.PlayResult.PlayResult
+import pokebowl.model.team.Team
 
 /**
   * @author Mark Soule on 1/29/16.
