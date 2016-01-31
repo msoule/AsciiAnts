@@ -36,28 +36,23 @@ object PlayCalculator {
 
   def puntResults(punt: OffensivePlay, receive: DefensivePlay, state: GameState): Seq[String] = {
     var messages = Seq[String]()
-    val kickingTeamOdds = punt.calculateOdds(state.possession, state.getNonPossessingTeam, receive)
-    // todo calculate punt effects
-    messages = messages :+ "Fair catch"
-    messages = messages ++ state.punt(20)
+    val puntingTeamOdds = punt.calculateOdds(state.possession, state.getNonPossessingTeam, receive)
+    messages = messages ++ punt.calculateResult(state, calculatePlayResults(puntingTeamOdds))
     messages
   }
 
   def fieldGoalResults(fieldGoal: OffensivePlay, defense: DefensivePlay, state: GameState): Seq[String] = {
     var messages = Seq[String]()
     val kickingTeamOdds = fieldGoal.calculateOdds(state.possession, state.getNonPossessingTeam, defense)
-    // todo calculate fieldGoal effects
-    messages = messages :+ "... It's good!"
-    state.scoreFieldGoal()
+    messages = messages ++ fieldGoal.calculateResult(state, calculatePlayResults(kickingTeamOdds))
     messages
   }
 
   def extraPointResults(state: GameState): Seq[String] = {
     var messages = Seq[String]()
-    val kickingTeamOdds = new ExtraPoint().calculateOdds(state.possession, state.getNonPossessingTeam, new DefendExtraPoint())
-    // todo calculate extraPoint effects
-    messages = messages :+ "... It's good!"
-    state.scoreExtraPoint()
+    val extraPoint = new ExtraPoint()
+    val kickingTeamOdds = extraPoint.calculateOdds(state.possession, state.getNonPossessingTeam, new DefendExtraPoint())
+    messages = messages ++ extraPoint.calculateResult(state, calculatePlayResults(kickingTeamOdds))
     messages
   }
 

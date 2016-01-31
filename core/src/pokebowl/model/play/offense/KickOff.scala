@@ -60,7 +60,7 @@ class KickOff extends OffensivePlay {
         messages = messages ++ state.kickOff(new Random().nextInt(20) + 20)
       case PlayResult.Good =>
         messages = messages :+ s"${state.possession.location} ${state.possession.name} will kickoff..."
-        messages = messages :+ s"${state.possession.kicker.last} #${state.possession.kicker.number} kicked the ball"
+        messages = messages :+ s"${state.possession.kicker.last} kicked the ball"
         messages = messages :+ s"It was a touchback"
         messages = messages ++ state.kickOff(20)
       case _ =>

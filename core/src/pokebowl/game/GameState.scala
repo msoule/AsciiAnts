@@ -52,14 +52,20 @@ class GameState(homeTeam: Team, awayTeam: Team) {
     messages
   }
 
-  def scoreExtraPoint() = {
-    addScore(possession, EXTRA_POINT_SCORE)
+  def scoreExtraPoint(success: Boolean = true) = {
+    if(success) addScore(possession, EXTRA_POINT_SCORE)
     playMode = PlayMode.KickOff
   }
 
-  def scoreFieldGoal() = {
-    addScore(possession, FIELD_GOAL_SCORE)
-    playMode = PlayMode.KickOff
+  def scoreFieldGoal(success: Boolean = true) = {
+    if(success) {
+      addScore(possession, FIELD_GOAL_SCORE)
+      playMode = PlayMode.KickOff
+    }
+    else {
+      changePossession()
+      firstDownMarker = lineOfScrimmage + 10
+    }
   }
 
   def kickOff(fieldPosition: Int) = {

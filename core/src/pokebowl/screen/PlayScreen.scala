@@ -245,6 +245,7 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     batch.begin()
     menuFont.draw(batch, s"${gameState.awayScore} vs ${gameState.homeScore} Q${gameState.currentQuarter} D${gameState.down}", startXY._1, startXY._2)
     menuFont.draw(batch, gameState.getFieldPositionText, startXY._1, startXY._2 - smallFontSize.size)
+    menuFont.draw(batch, "first down: " + gameState.firstDownMarker.toString, startXY._1, startXY._2 - smallFontSize.size - smallFontSize.size)
     batch.end()
   }
 
