@@ -2,8 +2,9 @@ package pokebowl.game
 
 import pokebowl.controller.PlayMode
 import pokebowl.controller.PlayMode._
-import pokebowl.model.play.Punt
 import pokebowl.model.play._
+import pokebowl.model.play.defense.ZoneCoverage
+import pokebowl.model.play.offense.{ScreenPass, Punt, FieldGoal}
 import pokebowl.model.team.Team
 
 /**
@@ -23,7 +24,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   var currentQuarter = 1
 
   // constants
-  private val MAX_YARDS = 40
+  private val MAX_YARDS = 100
   private val FIRST_DOWN_YARDS = 10
   private val PLAYS_PER_QUARTER = 10
   private val TOUCHDOWN_SCORE = 6
@@ -117,7 +118,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
 
   def advanceGameClock(): Seq[String] = {
     playCount += 1
-    var messages = Seq(s"Play #$playCount")
+    var messages: Seq[String] = Seq()
     if(playCount >= PLAYS_PER_QUARTER) {
       messages = messages :+ s"Quarter $currentQuarter is over"
       currentQuarter += 1
@@ -141,9 +142,9 @@ class GameState(homeTeam: Team, awayTeam: Team) {
     if(yardLine == (MAX_YARDS / 2))
       s"the $yardString"
     else if(our)
-      s"their $yardString"
+      s"the $yardString"
     else
-      s"opponent's $yardString"
+      s"their own $yardString"
   }
 
   def getNonPossessingTeam = {

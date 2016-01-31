@@ -94,14 +94,6 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     drawText = true
   }
 
-//  private def npcMove(playIndex: Int): Seq[String] = {
-//    Seq(s"${npcTeam.name} do a ${npcTeam.plays(playIndex).getDisplayText()}")
-//  }
-//
-//  private def playerMove(index: Int): Seq[String] = {
-//    Seq(s"${playerTeam.name} do a ${playerTeam.plays(index).getDisplayText()}")
-//  }
-
   private def triggerTextBox(cursor: Int) = {
     // player's choice
     val playerChoice = cursor - 1
@@ -113,13 +105,9 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     if(playerTeam != gameState.possession) {
       offenceChoice = npcChoice
       defenceChoice = playerChoice
-      //textToDraw = textToDraw ++ npcMove(npcChoice)
-      //textToDraw = textToDraw ++ playerMove(playerChoice)
     } else {
       offenceChoice = playerChoice
       defenceChoice = npcChoice
-      //textToDraw = textToDraw ++ playerMove(playerChoice)
-      //textToDraw = textToDraw ++ npcMove(npcChoice)
     }
 
     // Calculate results of play and advance the game state.
@@ -206,10 +194,10 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     val playMenuPosition4 = (buffer + menuPadding + menuBoxWidth, buffer + menuBoxHeight/2)
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
-    menuFont.draw(batch, playerTeam.plays(0).getName(), playMenuPosition1._1, playMenuPosition1._2)
-    menuFont.draw(batch, playerTeam.plays(1).getName(), playMenuPosition2._1, playMenuPosition2._2)
-    menuFont.draw(batch, playerTeam.plays(2).getName(), playMenuPosition3._1, playMenuPosition3._2)
-    menuFont.draw(batch, playerTeam.plays(3).getName(), playMenuPosition4._1, playMenuPosition4._2)
+    menuFont.draw(batch, playerTeam.plays(0).getName, playMenuPosition1._1, playMenuPosition1._2)
+    menuFont.draw(batch, playerTeam.plays(1).getName, playMenuPosition2._1, playMenuPosition2._2)
+    menuFont.draw(batch, playerTeam.plays(2).getName, playMenuPosition3._1, playMenuPosition3._2)
+    menuFont.draw(batch, playerTeam.plays(3).getName, playMenuPosition4._1, playMenuPosition4._2)
     batch.end()
 
     // draw cursor
@@ -256,7 +244,7 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
     menuFont.draw(batch, s"${gameState.awayScore} vs ${gameState.homeScore} Q${gameState.currentQuarter} D${gameState.down}", startXY._1, startXY._2)
-    menuFont.draw(batch, s"${gameState.getFieldPositionText} yard line", startXY._1, startXY._2 - smallFontSize.size)
+    menuFont.draw(batch, gameState.getFieldPositionText, startXY._1, startXY._2 - smallFontSize.size)
     batch.end()
   }
 
@@ -294,10 +282,10 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
 
     if(game.playerHome) {
       gameState = new GameState(playerTeam, npcTeam)
-      textToDraw = textToDraw :+ s"${playerTeam.location} ${playerTeam.name} will kickoff"
+      textToDraw = textToDraw :+ s"${playerTeam.location} ${playerTeam.name} will kickoff first"
     } else {
       gameState = new GameState(npcTeam, playerTeam)
-      textToDraw = textToDraw :+ s"${npcTeam.location} ${npcTeam.name} will kickoff"
+      textToDraw = textToDraw :+ s"${npcTeam.location} ${npcTeam.name} will kickoff first"
     }
 
     drawText = true

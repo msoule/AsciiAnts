@@ -394,7 +394,8 @@ object CarolinaPanthers {
       StatGlossary.FiftyPlus -> 2,
       StatGlossary.Xpm -> 56,
       StatGlossary.Xpa -> 59,
-      StatGlossary.EpPct -> 94.9
+      StatGlossary.EpPct -> 94.9,
+      StatGlossary.Tb -> 94.9
     )
   )
 

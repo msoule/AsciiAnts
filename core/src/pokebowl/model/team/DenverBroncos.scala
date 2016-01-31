@@ -414,8 +414,8 @@ object DenverBroncos {
     new Team(
             Array(),
             Map(),
-            "Denver",
             "Broncos",
+            "Denver",
             peytonManning,
             Seq(ronnieHillman, cjAnderson),
             Seq(demaryiusThomas, emmanuelSanders),
