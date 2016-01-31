@@ -24,7 +24,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   var currentQuarter = 1
 
   // constants
-  private val MAX_YARDS = 100
+  val MAX_YARDS = 100
   private val FIRST_DOWN_YARDS = 10
   private val PLAYS_PER_QUARTER = 10
   private val TOUCHDOWN_SCORE = 6
