@@ -20,6 +20,7 @@ object PlayCalculator {
     var messages = Seq[String]()
     val offenseOdds = offensePlay.calculateOdds(state.possession, state.getNonPossessingTeam, defensePlay)
     messages = messages ++ offensePlay.calculateResult(state, calculatePlayResults(offenseOdds))
+    messages = messages ++ state.advanceGameClock()
     messages
   }
 

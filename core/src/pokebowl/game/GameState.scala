@@ -47,9 +47,6 @@ class GameState(homeTeam: Team, awayTeam: Team) {
       firstDownMarker = lineOfScrimmage + FIRST_DOWN_YARDS
       messages = messages :+ "First down!"
     }
-    else {
-      messages = messages ++ advanceDowns()
-    }
     messages
   }
 

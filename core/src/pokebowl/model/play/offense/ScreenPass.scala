@@ -29,16 +29,17 @@ class ScreenPass extends OffensivePlay {
     val defenders = defense.safety ++ defense.cornerBack ++ defense.middleLinebacker ++ defense.outsideLinebacker
     val totalInterceptions = totalStats(defenders, StatGlossary.Int)
     val offenseInterceptionP = offense.quarterBack.stats(StatGlossary.IntP)
-    val padding = 2
+    val padding = 3
     val interceptionIndex = (offenseInterceptionP / 100) * totalInterceptions * padding
 
     // fumbles
     val totalFumbles = totalStats(offense.wideReceiver, StatGlossary.Fum)
     val fumblesRecovered = totalStats(defenders, StatGlossary.Ff)
-    val fumbleIndex = (totalFumbles + fumblesRecovered) / 2
+    val fumblePadding = 0.8
+    val fumbleIndex = (totalFumbles + fumblesRecovered) * fumblePadding
 
     // incomplete
-    val passPadding = 10
+    val passPadding = 15
     val incompleteIndex = 100 - offense.quarterBack.stats(StatGlossary.Pct) - passPadding
 
     resultArray(0) = PlayResult.Terrible
@@ -85,32 +86,32 @@ class ScreenPass extends OffensivePlay {
         val interceptor: Player = state.getNonPossessingTeam.safety(GameState.rand.nextInt(state.getNonPossessingTeam.safety.size))
         messages = messages :+ s"Intercepted by ${interceptor.last}!"
         state.changePossession()
-        state.changeLineOfScrimmage(state.MAX_YARDS - state.lineOfScrimmage + (interceptor.stats(StatGlossary.Yds)/16).asInstanceOf[Int])
-        messages = messages :+ s"${state.possession.location} ${state.possession.name} get possession"
+        messages = messages ++ state.changeLineOfScrimmage(state.MAX_YARDS - state.lineOfScrimmage + (interceptor.stats(StatGlossary.Yds)/16).asInstanceOf[Int])
+        messages = messages :+ s"${state.possession.name} get possession"
       case PlayResult.VeryBad =>
         messages = messages :+ s"${state.possession.quarterBack.last} passes the ball..."
         val fumbler: Player = state.possession.wideReceiver(GameState.rand.nextInt(state.possession.wideReceiver.size))
         messages = messages :+ s"Fumbled by ${fumbler.last}!"
-        state.advanceDowns()
+        messages = messages ++ state.advanceDowns()
       case PlayResult.Bad =>
         messages = messages :+ s"${state.possession.quarterBack.last} passes the ball..."
         messages = messages :+ s"Incomplete"
-        state.advanceDowns()
+        messages = messages ++ state.advanceDowns()
       case PlayResult.Average =>
         messages = messages :+ s"${state.possession.quarterBack.last} passes the ball..."
         val receptor: Player = state.possession.wideReceiver(GameState.rand.nextInt(state.possession.wideReceiver.size))
-        val balanceScaling = (GameState.rand.nextInt(5) + 8) * .1
+        val balanceScaling = (GameState.rand.nextInt(10) + 2) * .1
         val yards = (receptor.stats(StatGlossary.Avg) * balanceScaling).asInstanceOf[Int]
         messages = messages :+ s"Caught by ${receptor.last} for $yards yards"
         val firstDown = state.lineOfScrimmage + yards > state.firstDownMarker
-        state.changeLineOfScrimmage(state.lineOfScrimmage + yards)
+        messages = messages ++ state.changeLineOfScrimmage(state.lineOfScrimmage + yards)
         if(!firstDown)
-          state.advanceDowns()
+          messages = messages ++ state.advanceDowns()
       case _ =>
         messages = messages :+ s"${state.possession.quarterBack.last} passes the ball..."
         val receptor: Player = state.possession.wideReceiver(GameState.rand.nextInt(state.possession.wideReceiver.size))
         messages = messages :+ s"Caught by ${receptor.last}..."
-        state.changeLineOfScrimmage(state.MAX_YARDS)
+        messages = messages ++ state.changeLineOfScrimmage(state.MAX_YARDS)
     }
     messages
   }

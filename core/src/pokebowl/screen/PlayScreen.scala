@@ -235,7 +235,7 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
     menuFont.draw(batch, s"${scoreBoard.awayScore} to ${scoreBoard.homeScore} Q${scoreBoard.quarter} P${scoreBoard.clock}", startXY._1, startXY._2)
-    menuFont.draw(batch, s"${scoreBoard.down} and $yardsToFirst at ${gameState.getFieldPositionText}", startXY._1, startXY._2 - smallFontSize.size)
+    menuFont.draw(batch, s"${scoreBoard.down} and $yardsToFirst at ${scoreBoard.getFieldPositionText}", startXY._1, startXY._2 - smallFontSize.size)
     if(playerTeam == gameState.possession)
       menuFont.draw(batch, "OFFENSE", width - 300, 260)
     else {

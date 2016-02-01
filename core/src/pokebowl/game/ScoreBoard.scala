@@ -22,4 +22,13 @@ class ScoreBoard {
     clock = plays
   }
 
+  def getFieldPositionText: String = {
+    val intermediate = lineOfScrimmage - (100 / 2)
+    var our = true
+    if(intermediate > 0)
+      our = false
+    val yardLine = (100 / 2) - Math.abs(intermediate)
+    yardLine.toString
+  }
+
 }
