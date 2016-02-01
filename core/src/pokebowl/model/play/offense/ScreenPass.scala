@@ -73,7 +73,7 @@ class ScreenPass extends OffensivePlay {
       fillArray(resultArray, i + 1)
   }
 
-  override def getDisplayText: String = "do a Screen Pass"
+  override def getDisplayText: String = "try a Screen Pass"
 
   override def getName: String = "SCREEN PASS"
 

@@ -1,5 +1,6 @@
 package pokebowl.model.team
 
+import com.badlogic.gdx.graphics.Texture
 import pokebowl.model.play.Play
 import pokebowl.model.team.StatGlossary._
 
@@ -11,6 +12,8 @@ case class Team(
                  stats: Map[StatGlossary, Double],
                  name: String,
                  location: String,
+                 sprite: Texture,
+                 spriteFlip: Texture,
                  quarterBack: Player,
                  runningBack: Seq[Player],
                  wideReceiver: Seq[Player],

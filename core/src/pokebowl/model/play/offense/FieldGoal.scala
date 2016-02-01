@@ -33,7 +33,7 @@ class FieldGoal extends OffensivePlay {
     fillArray(0)
   }
 
-  override def getDisplayText: String = "will attempt Field Goal"
+  override def getDisplayText: String = "will try Field Goal"
 
   override def getName: String = "FIELD GOAL"
 
@@ -41,13 +41,13 @@ class FieldGoal extends OffensivePlay {
     var messages = Seq[String]()
     result match {
       case PlayResult.Terrible =>
-        messages = messages :+ s"${state.possession.location} ${state.possession.name} attempting field goal..."
+        messages = messages :+ s"${state.possession.location} attempting field goal..."
         messages = messages :+ s"${state.possession.kicker.last} kicked the ball"
         messages = messages :+ s"It was blocked!"
         state.scoreFieldGoal(false)
-        messages = messages :+ s"${state.possession.location} ${state.possession.name} will start their possession"
+        messages = messages :+ s"${state.possession.location} to start possession"
       case _ =>
-        messages = messages :+ s"${state.possession.location} ${state.possession.name} attempting field goal..."
+        messages = messages :+ s"${state.possession.location} attempting field goal..."
         messages = messages :+ s"${state.possession.kicker.last} kicked the ball"
         messages = messages :+ s"It was good!"
         state.scoreFieldGoal()

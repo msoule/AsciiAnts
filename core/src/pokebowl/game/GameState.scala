@@ -28,7 +28,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   // constants
   val MAX_YARDS = 100
   val FIRST_DOWN_YARDS = 10
-  private val PLAYS_PER_QUARTER = 10
+  private val PLAYS_PER_QUARTER = 30
   private val TOUCHDOWN_SCORE = 6
   private val EXTRA_POINT_SCORE = 1
   private val FIELD_GOAL_SCORE = 3
@@ -66,6 +66,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
     }
     else {
       changePossession()
+      lineOfScrimmage = MAX_YARDS - lineOfScrimmage
       firstDownMarker = lineOfScrimmage + 10
     }
   }
@@ -76,7 +77,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
     firstDownMarker = lineOfScrimmage + FIRST_DOWN_YARDS
     down = 1
     playMode = PlayMode.SelectPlay
-    Seq(s"${possession.name} to start possession at $getFieldPositionText")
+    Seq(s"${possession.name} to start at $getFieldPositionText")
   }
 
   def punt(fieldPosition: Int) = {
@@ -85,7 +86,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
     firstDownMarker = lineOfScrimmage + FIRST_DOWN_YARDS
     down = 1
     playMode = PlayMode.SelectPlay
-    Seq(s"${possession.name} to start possession at $getFieldPositionText")
+    Seq(s"${possession.name} to start at $getFieldPositionText")
   }
 
   def addScore(scoringTeam: Team, amount: Int) = {
@@ -106,7 +107,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   }
 
   private def getOffensivePlays: Array[Play] = {
-    Array(new ScreenPass, new ScreenPass, new ScreenPass, new ScreenPass)//Array(new ScreenPass, new ScreenPass, new Punt, new FieldGoal)
+    Array(new ScreenPass, new ScreenPass, new Punt, new FieldGoal)
   }
 
   private def getDefensivePlays: Array[Play] = {
@@ -117,7 +118,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
     down += 1
     if(down > 4) {
       changePossession()
-      Seq("Turnover!", s"${possession.name} will get the ball at $getFieldPositionText")
+      Seq("Turnover!", s"${possession.name} get ball at $getFieldPositionText")
     }
     else {
       Seq()
@@ -141,19 +142,19 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   }
 
   def getFieldPositionText: String = {
-    lineOfScrimmage.toString
-    //val intermediate = lineOfScrimmage - (MAX_YARDS / 2)
-    //var our = true
-    //if(intermediate > 0)
-    //  our = false
-    //val yardLine = (MAX_YARDS / 2) - Math.abs(intermediate)
-    //val yardString = s"$yardLine yard line"
-    //if(yardLine == (MAX_YARDS / 2))
-    //  s"the $yardString"
-    //else if(our)
-    //  s"the $yardString"
-    //else
-    //  s"their own $yardString"
+    //lineOfScrimmage.toString
+    val intermediate = lineOfScrimmage - (MAX_YARDS / 2)
+    var our = true
+    if(intermediate > 0)
+      our = false
+    val yardLine = (MAX_YARDS / 2) - Math.abs(intermediate)
+    val yardString = s"$yardLine yard line"
+    if(yardLine == (MAX_YARDS / 2))
+      s"$yardString"
+    else if(our)
+      s"$yardString"
+    else
+      s"$yardString"
   }
 
   def getNonPossessingTeam = {

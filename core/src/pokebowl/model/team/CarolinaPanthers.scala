@@ -1,5 +1,8 @@
 package pokebowl.model.team
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Texture
+
 /**
   * Create the Carolina Panthers team. Stats scrapped from
   * http://espn.go.com/nfl/team/stats/_/name/car
@@ -422,6 +425,8 @@ object CarolinaPanthers {
              Map(),
              "Panthers",
              "Carolina",
+             new Texture(Gdx.files.internal("sprites/panthers.png")),
+             new Texture(Gdx.files.internal("sprites/panthersflip.png")),
              camNewton,
              Seq(jonathanStewart, mikeTolbert),
              Seq(tedGinnJr, jerrichoCotchery),

@@ -1,5 +1,8 @@
 package pokebowl.model.team
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.graphics.Texture
+
 /**
   * Create the Denver Broncos team. Stats scrapped from
   * http://espn.go.com/nfl/team/stats/_/name/den
@@ -416,6 +419,8 @@ object DenverBroncos {
             Map(),
             "Broncos",
             "Denver",
+            new Texture(Gdx.files.internal("sprites/broncos.png")),
+            new Texture(Gdx.files.internal("sprites/broncosflip.png")),
             peytonManning,
             Seq(ronnieHillman, cjAnderson),
             Seq(demaryiusThomas, emmanuelSanders),

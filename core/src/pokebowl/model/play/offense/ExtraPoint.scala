@@ -31,7 +31,7 @@ class ExtraPoint extends OffensivePlay {
     fillArray(0)
   }
 
-  override def getDisplayText(): String = "will attempt Extra Point"
+  override def getDisplayText(): String = "will try Extra Point"
 
   override def getName(): String = "EXTRA POINT"
 
@@ -39,13 +39,13 @@ class ExtraPoint extends OffensivePlay {
     var messages = Seq[String]()
     result match {
       case PlayResult.Terrible =>
-        messages = messages :+ s"${state.possession.location} ${state.possession.name} attempting extra point..."
+        messages = messages :+ s"${state.possession.location} attempting extra point..."
         messages = messages :+ s"${state.possession.kicker.last} kicked the ball"
         messages = messages :+ s"It was blocked!"
         state.scoreFieldGoal(false)
-        messages = messages :+ s"${state.possession.location} ${state.possession.name} will start their possession"
+        messages = messages :+ s"${state.possession.location} to start possession"
       case _ =>
-        messages = messages :+ s"${state.possession.location} ${state.possession.name} attempting extra point..."
+        messages = messages :+ s"${state.possession.location} attempting extra point..."
         messages = messages :+ s"${state.possession.kicker.last} kicked the ball"
         messages = messages :+ s"It was good!"
         state.scoreExtraPoint()

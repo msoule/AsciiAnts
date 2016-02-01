@@ -26,8 +26,7 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
   var batch: SpriteBatch = _
   var shapeRenderer: ShapeRenderer = _
   var camera: OrthographicCamera = _
-  var box: Rectangle = _
-  var testSprite: Texture = _
+  var battleScreen: Texture = _
   var pokemonFont: FreeTypeFontGenerator = _
   var smallFontSize: FreeTypeFontParameter = _
   var cursorPosition = 2
@@ -52,6 +51,11 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     if(pokemonFont != null) pokemonFont.dispose()
     if(shapeRenderer != null) shapeRenderer.dispose()
     if(batch != null) batch.dispose()
+    if(playerTeam != null && playerTeam.sprite != null) playerTeam.sprite.dispose()
+    if(playerTeam != null && playerTeam.spriteFlip != null) playerTeam.spriteFlip.dispose()
+    if(npcTeam != null && npcTeam.sprite != null) npcTeam.sprite.dispose()
+    if(npcTeam != null && npcTeam.spriteFlip != null) npcTeam.spriteFlip.dispose()
+    if(battleScreen != null) battleScreen.dispose()
   }
 
   override def pause(): Unit = {
@@ -72,6 +76,12 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
 
     // tell the camera to update its matrices.
     camera.update()
+    batch.setProjectionMatrix(camera.combined)
+    batch.begin()
+    batch.draw(battleScreen, 0, 0)
+    batch.draw(playerTeam.sprite, 40, 220)
+    batch.draw(npcTeam.spriteFlip, width - 250, height - 200)
+    batch.end()
 
     if(drawText)
       controlTextBox(delta)
@@ -117,27 +127,7 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
   }
 
   private def controlMenu(delta: Float): Unit = {
-    // tell the SpriteBatch to render in the
-    // coordinate system specified by the camera.
-    //    batch.setProjectionMatrix(camera.combined)
-    //    batch.begin()
-    //    batch.draw(testSprite, box.x, box.y)
-    //    batch.end()
     drawMenu()
-
-    // process user input
-    //    if(Gdx.input.isTouched()) {
-    //      val touchPos: Vector3 = new Vector3()
-    //      touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0)
-    //      camera.unproject(touchPos)
-    //      box.x = touchPos.x - 64 / 2
-    //    }
-
-    // Check for user input and move the box as specified.
-    //if(Gdx.input.isKeyPressed(Keys.LEFT)) box.x -= 200 * Gdx.graphics.getDeltaTime
-    //if(Gdx.input.isKeyPressed(Keys.RIGHT)) box.x += 200 * Gdx.graphics.getDeltaTime
-    //if(Gdx.input.isKeyPressed(Keys.DOWN)) box.y -= 200 * Gdx.graphics.getDeltaTime
-    //if(Gdx.input.isKeyPressed(Keys.UP)) box.y += 200 * Gdx.graphics.getDeltaTime
 
     // Check for user input and move the cursor as specified.
     if (Gdx.input.isKeyPressed(Keys.RIGHT) && cursorPosition == 1) cursorPosition = 4
@@ -150,12 +140,6 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     if (Gdx.input.isKeyPressed(Keys.UP) && cursorPosition == 4) cursorPosition = 3
 
     if (Gdx.input.isKeyJustPressed(Keys.Z)) triggerTextBox(cursorPosition)
-
-    // Make sure the sprite stays within the screen bounds
-    //if(box.x < 0) box.x = 0
-    //if(box.x > width - 64) box.x = width - 64
-    //if(box.y < 0) box.y = 0
-    //if(box.y > height - 64) box.y = height - 64
   }
 
   private def controlTextBox(delta: Float) = {
@@ -171,31 +155,17 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
   }
 
   private def drawMenu(): Unit = {
-    val buffer = 40
-    val menuBoxWidth = 160
-    val menuBoxHeight = 90
-
-    // draw menu box
-    shapeRenderer.setProjectionMatrix(camera.combined)
-    shapeRenderer.begin(ShapeType.Line)
-    shapeRenderer.setColor(0, 0, 0, 0)
-    // bottom left
-    shapeRenderer.rect(buffer, buffer, menuBoxWidth, menuBoxHeight)
-    // top left
-    shapeRenderer.rect(buffer, buffer + menuBoxHeight, menuBoxWidth, menuBoxHeight)
-    // top right
-    shapeRenderer.rect(buffer + menuBoxWidth, buffer + menuBoxHeight, menuBoxWidth, menuBoxHeight)
-    // bottom right
-    shapeRenderer.rect(buffer + menuBoxWidth, buffer, menuBoxWidth, menuBoxHeight)
-    shapeRenderer.end()
+    val boxStart = (30, 35)
+    val menuBoxWidth = 573
+    val menuBoxHeight = 128
 
     // draw menu text
     val menuFont = pokemonFont.generateFont(smallFontSize)
-    val menuPadding = 40
-    val playMenuPosition1 = (buffer + menuPadding, buffer + menuBoxHeight/2)
-    val playMenuPosition2 = (buffer + menuPadding, buffer + menuBoxHeight + menuBoxHeight/2)
-    val playMenuPosition3 = (buffer + menuPadding + menuBoxWidth, buffer + menuBoxHeight + menuBoxHeight/2)
-    val playMenuPosition4 = (buffer + menuPadding + menuBoxWidth, buffer + menuBoxHeight/2)
+    val menuPadding = 30
+    val playMenuPosition1 = (boxStart._1 + menuPadding, boxStart._2 + menuBoxHeight/4 + 5)
+    val playMenuPosition2 = (boxStart._1 + menuPadding, boxStart._2 + 3*menuBoxHeight/4 + 5)
+    val playMenuPosition3 = (boxStart._1 + menuPadding + menuBoxWidth / 2, boxStart._2 + 3*menuBoxHeight/4 + 5)
+    val playMenuPosition4 = (boxStart._1 + menuPadding + menuBoxWidth / 2, boxStart._2 + menuBoxHeight/4 + 5)
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
     menuFont.draw(batch, playerTeam.plays(0).getName, playMenuPosition1._1, playMenuPosition1._2)
@@ -206,9 +176,9 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
 
     // draw cursor
     val cursorWidthPadding = 5
-    val cursorHeightPadding = smallFontSize.size / 2
-    val cursorWidth = 8
-    val cursorHalfHeight = 6
+    val cursorHeightPadding = 7
+    val cursorWidth = 14
+    val cursorHalfHeight = 9
     val cursorDrawPosition = cursorPosition match {
       case 1 => playMenuPosition1
       case 2 => playMenuPosition2
@@ -217,6 +187,7 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
       // default
       case _ => playMenuPosition2
     }
+
     shapeRenderer.begin(ShapeType.Filled)
     shapeRenderer.setColor(0, 0, 0, 0)
     shapeRenderer.triangle(cursorDrawPosition._1 - cursorWidthPadding, cursorDrawPosition._2 - cursorHeightPadding, cursorDrawPosition._1 - cursorWidthPadding - cursorWidth, cursorDrawPosition._2 + cursorHalfHeight - cursorHeightPadding, cursorDrawPosition._1 - cursorWidthPadding - cursorWidth, cursorDrawPosition._2 - cursorHalfHeight - cursorHeightPadding)
@@ -224,20 +195,14 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
   }
 
   private def drawTextBox(): Unit = {
-    val startXY = (100, height / 2)
-    val textBoxWidth = 700
-    val textBoxHeight = 100
-    shapeRenderer.setProjectionMatrix(camera.combined)
-    shapeRenderer.begin(ShapeType.Line)
-    shapeRenderer.setColor(0, 0, 0, 0)
-    shapeRenderer.rect(startXY._1, startXY._2, textBoxWidth, textBoxHeight)
-    shapeRenderer.end()
+    val startXY = (30, 35)
+    val textBoxHeight = 128
 
     val menuFont = pokemonFont.generateFont(smallFontSize)
-    val textBuffer = 10
+    val textBuffer = 30
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
-    menuFont.draw(batch, textToDraw.head, startXY._1 + textBuffer, startXY._2 + textBoxHeight / 2)
+    menuFont.draw(batch, textToDraw.head, startXY._1 + textBuffer, startXY._2 + textBoxHeight / 2 + smallFontSize.size)
     batch.end()
   }
 
@@ -254,14 +219,20 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
   }
 
   private def drawScoreBoard(): Unit = {
-    val startXY = (100, height - 10)
+    val startXY = (75, height - 50)
 
     val menuFont = pokemonFont.generateFont(smallFontSize)
     val yardsToFirst = if(scoreBoard.lineOfScrimmage >= (gameState.MAX_YARDS - gameState.FIRST_DOWN_YARDS)) "goal" else scoreBoard.yardsToFirst.toString
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
-    menuFont.draw(batch, s"${scoreBoard.awayScore} vs ${scoreBoard.homeScore} Q${scoreBoard.quarter} P${scoreBoard.clock}", startXY._1, startXY._2)
+    menuFont.draw(batch, s"${scoreBoard.awayScore} to ${scoreBoard.homeScore} Q${scoreBoard.quarter} P${scoreBoard.clock}", startXY._1, startXY._2)
     menuFont.draw(batch, s"${scoreBoard.down} and $yardsToFirst at ${scoreBoard.lineOfScrimmage}", startXY._1, startXY._2 - smallFontSize.size)
+    if(playerTeam == gameState.possession)
+      menuFont.draw(batch, "OFFENSE", width - 300, 260)
+    else {
+      menuFont.draw(batch, "DEFENSE", width - 300, 260)
+    }
+
     batch.end()
   }
 
@@ -275,19 +246,12 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     batch = new SpriteBatch()
     shapeRenderer = new ShapeRenderer()
 
-    testSprite = new Texture(Gdx.files.internal("sprites/bucket.png"));
-
-    // create a Rectangle to logically represent the bucket
-    box = new Rectangle()
-    box.x = width / 2 - 64 / 2 // center the bucket horizontally
-    box.y = 20; // bottom left corner of the bucket is 20 pixels above the bottom screen edge
-    box.width = 64
-    box.height = 64
+    battleScreen = new Texture(Gdx.files.internal("menu/battlescreen.png"))
 
     // init fonts
     pokemonFont = new FreeTypeFontGenerator(Gdx.files.internal("fonts/Pokemon GB.ttf"))
     smallFontSize = new FreeTypeFontParameter()
-    smallFontSize.size = 12
+    smallFontSize.size = 18
     smallFontSize.color = Color.BLACK
 
     // init selector
@@ -299,10 +263,10 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
 
     if(game.playerHome) {
       gameState = new GameState(playerTeam, npcTeam)
-      textToDraw = textToDraw :+ s"${playerTeam.location} ${playerTeam.name} will kickoff first"
+      textToDraw = textToDraw :+ s"${playerTeam.location} will kickoff first"
     } else {
       gameState = new GameState(npcTeam, playerTeam)
-      textToDraw = textToDraw :+ s"${npcTeam.location} ${npcTeam.name} will kickoff first"
+      textToDraw = textToDraw :+ s"${npcTeam.location} will kickoff first"
     }
 
     drawText = true

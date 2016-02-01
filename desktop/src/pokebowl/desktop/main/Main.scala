@@ -7,8 +7,8 @@ object Main extends App {
   val config = new LwjglApplicationConfiguration
 
   config.title = "Pokebowl"
-  config.width = 800
-  config.height = 480
+  config.width = 638
+  config.height = 580
 
   new LwjglApplication(new Application, config)
 }

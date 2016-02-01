@@ -5,8 +5,8 @@ import pokebowl.screen.{IntroScreen, PlayScreen}
 
 class Application extends Game {
 
-  val width = 800
-  val height = 480
+  val width = 638
+  val height = 580
   val screens: Array[Screen] = Array(new IntroScreen(width, height, this),
                                      new PlayScreen(width, height, this))
   var playerHome = true
