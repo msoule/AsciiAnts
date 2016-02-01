@@ -33,7 +33,6 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   private val EXTRA_POINT_SCORE = 1
   private val FIELD_GOAL_SCORE = 3
 
-
   def changeLineOfScrimmage(newLine: Int): Seq[String] = {
     var messages: Seq[String] = Seq()
     lineOfScrimmage = newLine
@@ -133,7 +132,18 @@ class GameState(homeTeam: Team, awayTeam: Team) {
       currentQuarter += 1
       currentQuarter match {
         case 3 => messages = messages ++ Seq(s"Halftime!", s"Quarter $currentQuarter begins")
-        case 5 => messages = messages :+ s"Game over!"
+        case 5 =>
+          messages = messages :+ s"Game over!"
+          if(homeScore > awayScore) {
+            messages = messages :+ s"${homeTeam.location} ${homeTeam.name} win!!"
+          }
+          else if(awayScore > homeScore) {
+            messages = messages :+ s"${awayTeam.location} ${awayTeam.name} win!!"
+          }
+          else {
+            messages = messages :+ s"It's a draw!"
+          }
+          playMode = PlayMode.EndGame
         case _ => messages = messages :+ s"Quarter $currentQuarter begins!"
       }
       playCount = 0
@@ -142,19 +152,12 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   }
 
   def getFieldPositionText: String = {
-    //lineOfScrimmage.toString
     val intermediate = lineOfScrimmage - (MAX_YARDS / 2)
     var our = true
     if(intermediate > 0)
       our = false
     val yardLine = (MAX_YARDS / 2) - Math.abs(intermediate)
-    val yardString = s"$yardLine yard line"
-    if(yardLine == (MAX_YARDS / 2))
-      s"$yardString"
-    else if(our)
-      s"$yardString"
-    else
-      s"$yardString"
+    yardLine.toString
   }
 
   def getNonPossessingTeam = {

@@ -5,5 +5,5 @@ package pokebowl.controller
   */
 object PlayMode extends Enumeration {
   type PlayMode = Value
-  val CoinFlip, SelectPlay, ExtraPoint, KickOff, Punt, EndGame = Value
+  val SelectPlay, ExtraPoint, KickOff, Punt, EndGame = Value
 }

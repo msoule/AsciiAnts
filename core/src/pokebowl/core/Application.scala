@@ -9,7 +9,7 @@ class Application extends Game {
   val height = 580
   val screens: Array[Screen] = Array(new IntroScreen(width, height, this),
                                      new PlayScreen(width, height, this))
-  var playerHome = true
+  var playerPanthers = true
 
   /**
     * Called when Application is first created.
@@ -20,8 +20,8 @@ class Application extends Game {
     setScreen(screens(0))
   }
 
-  def startGamePlay(playerIsHomeTeam: Boolean): Unit = {
-    playerHome = playerIsHomeTeam
+  def startGamePlay(playPanthers: Boolean): Unit = {
+    playerPanthers = playPanthers
     setScreen(screens(1))
   }
 

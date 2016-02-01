@@ -39,13 +39,13 @@ class ExtraPoint extends OffensivePlay {
     var messages = Seq[String]()
     result match {
       case PlayResult.Terrible =>
-        messages = messages :+ s"${state.possession.location} attempting extra point..."
+        messages = messages :+ s"${state.possession.location} to try extra point..."
         messages = messages :+ s"${state.possession.kicker.last} kicked the ball"
         messages = messages :+ s"It was blocked!"
         state.scoreFieldGoal(false)
         messages = messages :+ s"${state.possession.location} to start possession"
       case _ =>
-        messages = messages :+ s"${state.possession.location} attempting extra point..."
+        messages = messages :+ s"${state.possession.location} to try extra point..."
         messages = messages :+ s"${state.possession.kicker.last} kicked the ball"
         messages = messages :+ s"It was good!"
         state.scoreExtraPoint()

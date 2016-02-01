@@ -9,7 +9,7 @@ import pokebowl.model.team.Team
 import scala.util.Random
 
 /**
-  * Created by msoule on 1/30/16.
+  * @author Mark Soule on 1/30/16.
   */
 object PlayCalculator {
   def calculatePlayResults(odds: Array[PlayResult]): PlayResult = {
@@ -20,7 +20,6 @@ object PlayCalculator {
     var messages = Seq[String]()
     val offenseOdds = offensePlay.calculateOdds(state.possession, state.getNonPossessingTeam, defensePlay)
     messages = messages ++ offensePlay.calculateResult(state, calculatePlayResults(offenseOdds))
-    messages = messages ++ state.advanceGameClock()
     messages
   }
 

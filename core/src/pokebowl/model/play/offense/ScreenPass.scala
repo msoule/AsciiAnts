@@ -85,7 +85,6 @@ class ScreenPass extends OffensivePlay {
         val interceptor: Player = state.getNonPossessingTeam.safety(GameState.rand.nextInt(state.getNonPossessingTeam.safety.size))
         messages = messages :+ s"Intercepted by ${interceptor.last}!"
         state.changePossession()
-        messages = messages :+ (interceptor.stats(StatGlossary.Yds)/16).toString
         state.changeLineOfScrimmage(state.MAX_YARDS - state.lineOfScrimmage + (interceptor.stats(StatGlossary.Yds)/16).asInstanceOf[Int])
         messages = messages :+ s"${state.possession.location} ${state.possession.name} get possession"
       case PlayResult.VeryBad =>

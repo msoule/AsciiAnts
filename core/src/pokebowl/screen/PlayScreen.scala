@@ -90,6 +90,7 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
         case PlayMode.KickOff => kickOffEvent()
         case PlayMode.ExtraPoint => extraPointEvent()
         case PlayMode.SelectPlay => controlMenu(delta)
+        case PlayMode.EndGame => Gdx.app.exit()
       }
 
     drawScoreBoard()
@@ -108,8 +109,16 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
   private def triggerTextBox(cursor: Int) = {
     // player's choice
     val playerChoice = cursor - 1
-    // npc's choice
-    val npcChoice = GameState.rand.nextInt(4)
+    // npc's choice... stupid ai
+    var npcChoice = 1
+    // go for field goal
+    if(gameState.down == 4 && gameState.lineOfScrimmage > 60) {
+      npcChoice = 3
+    }
+    // go for punt
+    else if(gameState.down == 4) {
+      npcChoice = 2
+    }
 
     var offenceChoice = playerChoice
     var defenceChoice = npcChoice
@@ -226,7 +235,7 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
     menuFont.draw(batch, s"${scoreBoard.awayScore} to ${scoreBoard.homeScore} Q${scoreBoard.quarter} P${scoreBoard.clock}", startXY._1, startXY._2)
-    menuFont.draw(batch, s"${scoreBoard.down} and $yardsToFirst at ${scoreBoard.lineOfScrimmage}", startXY._1, startXY._2 - smallFontSize.size)
+    menuFont.draw(batch, s"${scoreBoard.down} and $yardsToFirst at ${gameState.getFieldPositionText}", startXY._1, startXY._2 - smallFontSize.size)
     if(playerTeam == gameState.possession)
       menuFont.draw(batch, "OFFENSE", width - 300, 260)
     else {
@@ -261,12 +270,22 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     playerTeam = CarolinaPanthers.team
     npcTeam = DenverBroncos.team
 
-    if(game.playerHome) {
-      gameState = new GameState(playerTeam, npcTeam)
-      textToDraw = textToDraw :+ s"${playerTeam.location} will kickoff first"
+    if(game.playerPanthers) {
+      playerTeam = CarolinaPanthers.team
+      npcTeam = DenverBroncos.team
     } else {
+      playerTeam = DenverBroncos.team
+      npcTeam = CarolinaPanthers.team
+    }
+
+    textToDraw = textToDraw :+ s"Flipping coin"
+    if(GameState.rand.nextBoolean()) {
+      gameState = new GameState(playerTeam, npcTeam)
+      textToDraw = textToDraw :+ s"${npcTeam.location} will receive first"
+    }
+    else {
       gameState = new GameState(npcTeam, playerTeam)
-      textToDraw = textToDraw :+ s"${npcTeam.location} will kickoff first"
+      textToDraw = textToDraw :+ s"${playerTeam.location} will receive first"
     }
 
     drawText = true
