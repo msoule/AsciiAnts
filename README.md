@@ -5,7 +5,7 @@ But how does this answer the JVM challenge? A football game is just a series of 
 
 Also, I wanted to create a simulator that would automatically play the game using the same rules to create an official prediction. I didn't have time for that so I will play the game myself and submit a prediction.
 
-*Note: This was time consuming so offense can only do screen passes, punts, or field goals and defense can only do zone coverage. Also, the backend calculations to simulate the outcome of each play are rudimentary at best. Early-release-pre-alpha-prototype 
+Note: This was time consuming so offense can only do screen passes, punts, or field goals and defense can only do zone coverage. Also, the backend calculations to simulate the outcome of each play are rudimentary at best. Early-release-pre-alpha-prototype 
 ---
 
 # Build
