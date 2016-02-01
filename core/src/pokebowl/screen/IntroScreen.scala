@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.{Color, GL20, OrthographicCamera, Texture}
 import com.badlogic.gdx.{Gdx, InputAdapter, Screen}
 
 import pokebowl.core.Application
+import pokebowl.game.GameState
 
 import scala.util.Random
 
@@ -63,7 +64,7 @@ class IntroScreen(width: Float, height: Float, game: Application, background: Co
 
     drawTitleScreen()
 
-    val playerHome = new Random().nextBoolean()
+    val playerHome = GameState.rand.nextBoolean()
     if (Gdx.input.isKeyJustPressed(Keys.Z)) game.startGamePlay(playerHome)
   }
 

@@ -52,18 +52,18 @@ class Punt extends OffensivePlay {
         messages = messages :+ s"${state.possession.location} ${state.possession.name} will punt..."
         messages = messages :+ s"${state.possession.punter.last} punted the ball"
         messages = messages :+ s"It was blocked!"
-        messages = messages ++ state.punt(state.lineOfScrimmage - new Random().nextInt(10))
+        messages = messages ++ state.punt(state.MAX_YARDS - state.lineOfScrimmage)
       case PlayResult.VeryBad | PlayResult.Bad =>
         messages = messages :+ s"${state.possession.location} ${state.possession.name} will punt..."
         messages = messages :+ s"${state.possession.punter.last} punted the ball"
         messages = messages :+ s"${state.getNonPossessingTeam.name} returning the ball"
         messages = messages :+ s"It was a great return"
-        messages = messages ++ state.punt(new Random().nextInt(20) + 20)
+        messages = messages ++ state.punt(GameState.rand.nextInt(20) + 30)
       case PlayResult.Average =>
         messages = messages :+ s"${state.possession.location} ${state.possession.name} will punt..."
         messages = messages :+ s"${state.possession.punter.last} kicked the ball"
         messages = messages :+ s"${state.getNonPossessingTeam.name} returning the ball"
-        messages = messages ++ state.punt(state.lineOfScrimmage + state.possession.punter.stats(StatGlossary.Net).asInstanceOf[Int] - new Random().nextInt(10))
+        messages = messages ++ state.punt(GameState.rand.nextInt(20) + 10)
       case PlayResult.Good =>
         messages = messages :+ s"${state.possession.location} ${state.possession.name} will punt..."
         messages = messages :+ s"${state.possession.punter.last} punted the ball"
@@ -74,7 +74,7 @@ class Punt extends OffensivePlay {
         messages = messages :+ s"${state.possession.punter.last} punted the ball"
         messages = messages :+ s"Great punt!"
         messages = messages :+ s"${state.getNonPossessingTeam.name} returning the ball"
-        messages = messages ++ state.punt(new Random().nextInt(15) + 5)
+        messages = messages ++ state.punt(GameState.rand.nextInt(15) + 5)
     }
     messages
   }

@@ -13,16 +13,15 @@ import scala.util.Random
   */
 object PlayCalculator {
   def calculatePlayResults(odds: Array[PlayResult]): PlayResult = {
-    odds(new Random().nextInt(100))
-  }
-
-  def calculateResultEffects(offense: Team, defense: Team, result: PlayResult, state: GameState): Seq[String] = {
-    state.changeLineOfScrimmage(1)
+    odds(GameState.rand.nextInt(100))
   }
 
   private def calculatePlayEnd(offensePlay: OffensivePlay, defensePlay: DefensivePlay, state: GameState): Seq[String] = {
+    var messages = Seq[String]()
     val offenseOdds = offensePlay.calculateOdds(state.possession, state.getNonPossessingTeam, defensePlay)
-    calculateResultEffects(state.getHomeTeam, state.getAwayTeam, PlayResult.Average, state)
+    messages = messages ++ offensePlay.calculateResult(state, calculatePlayResults(offenseOdds))
+    messages = messages ++ state.advanceGameClock()
+    messages
   }
 
   def kickOffResults(state: GameState): Seq[String] = {
@@ -69,20 +68,17 @@ object PlayCalculator {
         val kick = new FieldGoal
         val defend = new DefendFieldGoal
         messages = messages ++ Seq(displayMove(state.possession.name, kick), displayMove(state.getNonPossessingTeam.name, defend))
-        fieldGoalResults(kick, defend, state)
+        messages = messages ++ fieldGoalResults(kick, defend, state)
       case offP: Punt =>
         val punt = new Punt
         val receive = new ReceivePunt
         messages = messages ++ Seq(displayMove(state.possession.name, punt), displayMove(state.getNonPossessingTeam.name, receive))
-        puntResults(punt, receive, state)
+        messages = messages ++ puntResults(punt, receive, state)
       case _ =>
         val defensePlay = state.getNonPossessingTeam.plays(defenseChoice)
         messages = messages ++ Seq(displayMove(state.possession.name, offensePlay), displayMove(state.getNonPossessingTeam.name, defensePlay))
         messages = messages ++ calculatePlayEnd(offensePlay.asInstanceOf[OffensivePlay], defensePlay.asInstanceOf[DefensivePlay], state)
     }
-
-    // track game clock
-    messages = messages ++ state.advanceGameClock()
     messages
   }
 }

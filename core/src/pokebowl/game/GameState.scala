@@ -7,6 +7,8 @@ import pokebowl.model.play.defense.ZoneCoverage
 import pokebowl.model.play.offense.{ScreenPass, Punt, FieldGoal}
 import pokebowl.model.team.Team
 
+import scala.util.Random
+
 /**
   * Tracks the state of the football game.
   *
@@ -25,16 +27,16 @@ class GameState(homeTeam: Team, awayTeam: Team) {
 
   // constants
   val MAX_YARDS = 100
-  private val FIRST_DOWN_YARDS = 10
+  val FIRST_DOWN_YARDS = 10
   private val PLAYS_PER_QUARTER = 10
   private val TOUCHDOWN_SCORE = 6
   private val EXTRA_POINT_SCORE = 1
   private val FIELD_GOAL_SCORE = 3
 
 
-  def changeLineOfScrimmage(change: Int): Seq[String] = {
+  def changeLineOfScrimmage(newLine: Int): Seq[String] = {
     var messages: Seq[String] = Seq()
-    lineOfScrimmage += change
+    lineOfScrimmage = newLine
     if(lineOfScrimmage >= MAX_YARDS) {
       addScore(possession, TOUCHDOWN_SCORE)
       playMode = PlayMode.ExtraPoint
@@ -104,7 +106,7 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   }
 
   private def getOffensivePlays: Array[Play] = {
-    Array(new ScreenPass, new ScreenPass, new Punt, new FieldGoal)
+    Array(new ScreenPass, new ScreenPass, new ScreenPass, new ScreenPass)//Array(new ScreenPass, new ScreenPass, new Punt, new FieldGoal)
   }
 
   private def getDefensivePlays: Array[Play] = {
@@ -139,18 +141,19 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   }
 
   def getFieldPositionText: String = {
-    val intermediate = lineOfScrimmage - (MAX_YARDS / 2)
-    var our = true
-    if(intermediate > 0)
-      our = false
-    val yardLine = (MAX_YARDS / 2) - Math.abs(intermediate)
-    val yardString = s"$yardLine yard line"
-    if(yardLine == (MAX_YARDS / 2))
-      s"the $yardString"
-    else if(our)
-      s"the $yardString"
-    else
-      s"their own $yardString"
+    lineOfScrimmage.toString
+    //val intermediate = lineOfScrimmage - (MAX_YARDS / 2)
+    //var our = true
+    //if(intermediate > 0)
+    //  our = false
+    //val yardLine = (MAX_YARDS / 2) - Math.abs(intermediate)
+    //val yardString = s"$yardLine yard line"
+    //if(yardLine == (MAX_YARDS / 2))
+    //  s"the $yardString"
+    //else if(our)
+    //  s"the $yardString"
+    //else
+    //  s"their own $yardString"
   }
 
   def getNonPossessingTeam = {
@@ -164,4 +167,8 @@ class GameState(homeTeam: Team, awayTeam: Team) {
   def getAwayTeam = {
     awayTeam
   }
+}
+
+object GameState {
+  val rand = new Random()
 }

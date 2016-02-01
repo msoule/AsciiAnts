@@ -48,27 +48,27 @@ class KickOff extends OffensivePlay {
     var messages = Seq[String]()
     result match {
       case PlayResult.Terrible | PlayResult.VeryBad | PlayResult.Bad =>
-        messages = messages :+ s"${state.possession.location} ${state.possession.name} will kickoff..."
+        messages = messages :+ s"${state.possession.location} ${state.possession.name} kicking off..."
         messages = messages :+ s"${state.possession.kicker.last} kicked the ball"
         messages = messages :+ s"${state.getNonPossessingTeam.name} returning the ball"
         messages = messages :+ s"It was a great return"
-        messages = messages ++ state.kickOff(new Random().nextInt(40) + 40)
+        messages = messages ++ state.kickOff(GameState.rand.nextInt(40) + 40)
       case PlayResult.Average =>
-        messages = messages :+ s"${state.possession.location} ${state.possession.name} will kickoff..."
+        messages = messages :+ s"${state.possession.location} ${state.possession.name} kicking off..."
         messages = messages :+ s"${state.possession.kicker.last} kicked the ball"
         messages = messages :+ s"${state.getNonPossessingTeam.name} returning the ball"
-        messages = messages ++ state.kickOff(new Random().nextInt(20) + 20)
+        messages = messages ++ state.kickOff(GameState.rand.nextInt(20) + 20)
       case PlayResult.Good =>
-        messages = messages :+ s"${state.possession.location} ${state.possession.name} will kickoff..."
+        messages = messages :+ s"${state.possession.location} ${state.possession.name} kicking off..."
         messages = messages :+ s"${state.possession.kicker.last} kicked the ball"
         messages = messages :+ s"It was a touchback"
         messages = messages ++ state.kickOff(20)
       case _ =>
-        messages = messages :+ s"${state.possession.location} ${state.possession.name} will kickoff..."
+        messages = messages :+ s"${state.possession.location} ${state.possession.name} kicking off..."
         messages = messages :+ s"${state.possession.kicker.last} kicked the ball"
         messages = messages :+ s"Great kick!"
         messages = messages :+ s"${state.getNonPossessingTeam.name} returning the ball"
-        messages = messages ++ state.kickOff(new Random().nextInt(15) + 5)
+        messages = messages ++ state.kickOff(GameState.rand.nextInt(15) + 5)
     }
     messages
   }

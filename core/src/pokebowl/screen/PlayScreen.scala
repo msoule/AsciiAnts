@@ -11,7 +11,7 @@ import com.badlogic.gdx.math.Rectangle
 import com.badlogic.gdx.{Gdx, InputAdapter, Screen}
 import pokebowl.controller.PlayMode
 import pokebowl.core.Application
-import pokebowl.game.{PlayCalculator, GameState}
+import pokebowl.game.{ScoreBoard, PlayCalculator, GameState}
 import pokebowl.model.team.{Team, DenverBroncos, CarolinaPanthers}
 
 import scala.util.Random
@@ -35,6 +35,7 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
   var textToDraw: Seq[String] = Seq()
   var drawText: Boolean = false
   var gameState: GameState = _
+  var scoreBoard: ScoreBoard = _
 
   var playerTeam: Team = _
   var npcTeam: Team = _
@@ -98,7 +99,7 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     // player's choice
     val playerChoice = cursor - 1
     // npc's choice
-    val npcChoice = new Random().nextInt(4)
+    val npcChoice = GameState.rand.nextInt(4)
 
     var offenceChoice = playerChoice
     var defenceChoice = npcChoice
@@ -163,6 +164,9 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     if (Gdx.input.isKeyJustPressed(Keys.Z)) {
       textToDraw = textToDraw.tail
       drawText = textToDraw.nonEmpty
+      if(!drawText) {
+        updateScoreBoard()
+      }
     }
   }
 
@@ -237,15 +241,27 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
     batch.end()
   }
 
+  private def updateScoreBoard() = {
+    scoreBoard.update(
+      gameState.homeScore,
+      gameState.awayScore,
+      gameState.down,
+      gameState.firstDownMarker - gameState.lineOfScrimmage,
+      gameState.lineOfScrimmage,
+      gameState.currentQuarter,
+      gameState.playCount
+    )
+  }
+
   private def drawScoreBoard(): Unit = {
     val startXY = (100, height - 10)
 
     val menuFont = pokemonFont.generateFont(smallFontSize)
+    val yardsToFirst = if(scoreBoard.lineOfScrimmage >= (gameState.MAX_YARDS - gameState.FIRST_DOWN_YARDS)) "goal" else scoreBoard.yardsToFirst.toString
     batch.setProjectionMatrix(camera.combined)
     batch.begin()
-    menuFont.draw(batch, s"${gameState.awayScore} vs ${gameState.homeScore} Q${gameState.currentQuarter} D${gameState.down}", startXY._1, startXY._2)
-    menuFont.draw(batch, gameState.getFieldPositionText, startXY._1, startXY._2 - smallFontSize.size)
-    menuFont.draw(batch, "first down: " + gameState.firstDownMarker.toString, startXY._1, startXY._2 - smallFontSize.size - smallFontSize.size)
+    menuFont.draw(batch, s"${scoreBoard.awayScore} vs ${scoreBoard.homeScore} Q${scoreBoard.quarter} P${scoreBoard.clock}", startXY._1, startXY._2)
+    menuFont.draw(batch, s"${scoreBoard.down} and $yardsToFirst at ${scoreBoard.lineOfScrimmage}", startXY._1, startXY._2 - smallFontSize.size)
     batch.end()
   }
 
@@ -291,6 +307,7 @@ class PlayScreen(width: Float, height: Float, game: Application, background: Col
 
     drawText = true
     gameState.playMode = PlayMode.KickOff
+    scoreBoard = new ScoreBoard
   }
 
   override def resume(): Unit = {
