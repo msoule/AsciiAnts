@@ -1,6 +1,7 @@
-target/
+.gradle
+.idea
 build/
-.idea/
+core/build/
+desktop/build/
 *.iml
-*.ipr
-*.iws
+*.DS_STORE
