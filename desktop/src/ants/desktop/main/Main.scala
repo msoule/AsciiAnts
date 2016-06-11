@@ -1,12 +1,12 @@
-package pokebowl.desktop.main
+package ants.desktop.main
 
 import com.badlogic.gdx.backends.lwjgl.{LwjglApplication, LwjglApplicationConfiguration}
-import pokebowl.core.Application
+import ants.core.Application
 
 object Main extends App {
   val config = new LwjglApplicationConfiguration
 
-  config.title = "Pokebowl"
+  config.title = "Ascii Ants"
   config.width = 638
   config.height = 580
 

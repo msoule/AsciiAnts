@@ -14,7 +14,7 @@ allprojects {
 
     version = '1.0'
     ext {
-        appName = "pokebowl-libgdx"
+        appName = "ascii-ants"
         gdxVersion = '1.7.1'
         scalaVersion = '2.11.7'
         roboVMVersion = '1.9.0'
@@ -52,6 +52,12 @@ project(":core") {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
         compile fileTree(dir: 'lib', include: '*.jar')
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.foo.bar.MainClass'
     }
 }
 

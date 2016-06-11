@@ -1,15 +1,13 @@
-package pokebowl.core
+package ants.core
 
 import com.badlogic.gdx.{Screen, Gdx, Game}
-import pokebowl.screen.{IntroScreen, PlayScreen}
+import ants.screen.IntroScreen
 
 class Application extends Game {
 
   val width = 638
   val height = 580
-  val screens: Array[Screen] = Array(new IntroScreen(width, height, this),
-                                     new PlayScreen(width, height, this))
-  var playerPanthers = true
+  val screens: Array[Screen] = Array(new IntroScreen(width, height))
 
   /**
     * Called when Application is first created.
@@ -18,11 +16,6 @@ class Application extends Game {
     Gdx.input.setCursorCatched(false)
 
     setScreen(screens(0))
-  }
-
-  def startGamePlay(playPanthers: Boolean): Unit = {
-    playerPanthers = playPanthers
-    setScreen(screens(1))
   }
 
   override def dispose(): Unit = {
